@@ -53,7 +53,7 @@ Service: ${form.service}`;
           </div>
 
           <a 
-            href="tel:+1 (214)251-9820"
+            href="tel:+1 2142519820"
             onClick={() => {
               if (typeof window !== "undefined" && typeof window.gtag === "function") {
                 window.gtag("event", "conversion", {
