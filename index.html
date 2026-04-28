@@ -6,55 +6,52 @@
 
     <!-- PRIMARY SEO -->
     <title>Furniture Assembly in Fort Worth, TX | IKEA & Home Setup | Pro Assembly</title>
-    <meta name="description" content="Professional furniture assembly in Fort Worth, TX. IKEA, office, and home furniture setup. Fast, affordable, same-day service available. Call now!" />
-    <meta name="keywords" content="furniture assembly Fort Worth, IKEA assembly, handyman Fort Worth, office furniture setup, bed assembly service" />
+    <meta name="description" content="Professional furniture assembly in Fort Worth, TX. IKEA, office, and home furniture setup. Fast, affordable, same-day service available. Book now!" />
+    <meta name="keywords" content="furniture assembly Fort Worth, IKEA assembly Fort Worth, handyman Fort Worth, office furniture setup, bed assembly service" />
     <meta name="author" content="Pro Assembly" />
 
     <!-- CANONICAL -->
-    <link rel="canonical" href="https://yourdomain.com/" />
+    <link rel="canonical" href="https://proassembl.com/" />
 
-    <!-- OPEN GRAPH (SOCIAL SHARING) -->
+    <!-- OPEN GRAPH -->
     <meta property="og:title" content="Furniture Assembly Experts in Fort Worth, TX" />
     <meta property="og:description" content="Fast, reliable furniture assembly services. Same-day availability." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://yourdomain.com/" />
-    <meta property="og:image" content="https://yourdomain.com/preview.jpg" />
+    <meta property="og:url" content="https://proassembl.com/" />
+    <meta property="og:image" content="https://proassembl.com/preview.jpg" />
 
     <!-- TWITTER -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Furniture Assembly in Fort Worth" />
     <meta name="twitter:description" content="Affordable IKEA and furniture assembly services." />
-    <meta name="twitter:image" content="https://yourdomain.com/preview.jpg" />
+    <meta name="twitter:image" content="https://proassembl.com/preview.jpg" />
 
     <!-- FAVICON -->
     <link rel="icon" href="/favicon.ico" />
 
     <!-- GOOGLE SITE VERIFICATION -->
-    <meta name="google-site-verification" content="PASTE_GOOGLE_VERIFICATION_CODE" />
+    <meta name="google-site-verification" content="PASTE_GOOGLE_CODE" />
 
-    <!-- GOOGLE ANALYTICS + GOOGLE ADS -->
+    <!-- GOOGLE TAG (Analytics + Ads) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      // Google Analytics (GA4)
-      gtag('config', 'G-XXXXXXXXXX');
-
-      // Google Ads
-      gtag('config', 'AW-XXXXXXXXX');
+      gtag('config', 'G-XXXXXXXXXX'); // GA4
+      gtag('config', 'AW-XXXXXXXXX'); // Google Ads
     </script>
 
-    <!-- LOCAL BUSINESS STRUCTURED DATA (VERY IMPORTANT FOR SEO) -->
+    <!-- LOCAL SEO (VERY IMPORTANT) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       "name": "Pro Assembly",
-      "image": "https://yourdomain.com/logo.png",
-      "url": "https://yourdomain.com",
+      "url": "https://proassembl.com",
       "telephone": "+1-817-XXX-XXXX",
+      "areaServed": ["Fort Worth", "Dallas", "Arlington"],
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Fort Worth",
@@ -62,24 +59,18 @@
         "postalCode": "76101",
         "addressCountry": "US"
       },
-      "areaServed": ["Fort Worth", "Dallas", "Arlington"],
-      "serviceType": "Furniture Assembly",
-      "priceRange": "$$"
+      "serviceType": "Furniture Assembly"
     }
     </script>
 
-    <!-- PERFORMANCE (OPTIONAL BUT GOOD) -->
-    <link rel="preconnect" href="https://www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   </head>
 
   <body>
     <div id="root"></div>
 
-    <!-- MAIN APP -->
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- GOOGLE ADS CONVERSION EVENT EXAMPLE -->
+    <!-- Conversion tracking helper -->
     <script>
       function trackConversion() {
         gtag('event', 'conversion', {
