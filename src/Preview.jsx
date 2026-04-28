@@ -5,7 +5,11 @@ export default function Preview() {
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    service: ""
+    service: "",
+    details: "",
+    address: "",
+    time: "",
+    contactMethod: "whatsapp"
   });
 
   const tools = [
@@ -23,19 +27,33 @@ export default function Preview() {
     const message = `New Booking Request:
 Name: ${form.name}
 Phone: ${form.phone}
-Service: ${form.service}`;
+Service: ${form.service}
+Details: ${form.details}
+Address: ${form.address}
+Preferred Time: ${form.time}
+`;
 
-    const phoneNumber = "12142519820"; // <-- PUT YOUR REAL NUMBER
+    const phoneNumber = "12142519820"; // your number
 
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
+    // Google Ads conversion tracking
     if (typeof window !== "undefined" && typeof window.gtag === "function") {
       window.gtag("event", "conversion", {
         send_to: "AW-XXXXXXXXX/XXXXXXXX"
       });
     }
 
-    window.open(whatsappURL, "_blank");
+    if (form.contactMethod === "whatsapp") {
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
+
+    if (form.contactMethod === "call") {
+      window.location.href = `tel:${phoneNumber}`;
+    }
+
+    if (form.contactMethod === "sms") {
+      window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+    }
   };
 
   return (
@@ -53,14 +71,7 @@ Service: ${form.service}`;
           </div>
 
           <a 
-            href="tel:+1 2142519820"
-            onClick={() => {
-              if (typeof window !== "undefined" && typeof window.gtag === "function") {
-                window.gtag("event", "conversion", {
-                  send_to: "AW-XXXXXXXXX/XXXXXXXX"
-                });
-              }
-            }}
+            href="tel:+12142519820"
             className="inline-flex items-center gap-2 rounded-2xl px-4 py-2 bg-green-600 text-white font-medium"
           >
             <Phone className="w-4 h-4" /> Call Now
@@ -88,13 +99,20 @@ Service: ${form.service}`;
             </a>
           </div>
 
+          {/* Trust Boost */}
+          <div className="mt-6 text-sm opacity-80 space-y-1">
+            <div>✔ Same-day service available</div>
+            <div>✔ Fast response (under 10 min)</div>
+            <div>✔ Serving Dallas & nearby areas</div>
+          </div>
+
           <div className="mt-6 flex items-center gap-4 text-sm opacity-80">
             <MapPin className="h-4 w-4" /> Dallas, TX
             <ShieldCheck className="h-4 w-4" /> Insured
           </div>
         </div>
 
-        {/* Services Grid */}
+        {/* Services */}
         <div className="grid grid-cols-3 gap-4">
           {tools.map(({ Icon, label }, i) => (
             <div key={i} className="rounded-2xl border border-white/10 p-4 text-center">
@@ -141,6 +159,39 @@ Service: ${form.service}`;
             <option>TV Mounting</option>
             <option>Shelving</option>
             <option>Fitness Equipment</option>
+            <option>General Installation</option>
+          </select>
+
+          <textarea
+            placeholder="Describe what you need (items, size, brand...)"
+            value={form.details}
+            onChange={(e) => setForm({ ...form, details: e.target.value })}
+            className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
+          />
+
+          <input
+            type="text"
+            placeholder="Your Address / Area"
+            value={form.address}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
+            className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
+          />
+
+          <input
+            type="datetime-local"
+            value={form.time}
+            onChange={(e) => setForm({ ...form, time: e.target.value })}
+            className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
+          />
+
+          <select
+            value={form.contactMethod}
+            onChange={(e) => setForm({ ...form, contactMethod: e.target.value })}
+            className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
+          >
+            <option value="whatsapp">WhatsApp</option>
+            <option value="call">Call Me</option>
+            <option value="sms">Text Me</option>
           </select>
 
           <button
