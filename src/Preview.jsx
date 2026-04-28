@@ -25,7 +25,7 @@ Name: ${form.name}
 Phone: ${form.phone}
 Service: ${form.service}`;
 
-    const phoneNumber = "18175551234"; // <-- PUT YOUR REAL NUMBER
+    const phoneNumber = "12142519820"; // <-- PUT YOUR REAL NUMBER
 
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
