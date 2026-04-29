@@ -11,6 +11,8 @@ export default function Preview() {
     service: "",
     details: "",
     address: "",
+    city: "",
+    zip: "",
     date: "",
     time: "",
     contactMethod: "whatsapp"
@@ -28,27 +30,35 @@ export default function Preview() {
     { icon: Hammer, label: "Installation" },
   ];
 
+  // GPS helper (does NOT override full address)
   const handleLocation = () => {
-  if (!navigator.geolocation) return;
+    if (!navigator.geolocation) return;
 
-  setLoadingLocation(true);
+    setLoadingLocation(true);
 
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
 
-      const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+        const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
 
-      setForm({ ...form, address: mapsLink });
-      setLoadingLocation(false);
-    },
-    () => {
-      alert("Could not get location");
-      setLoadingLocation(false);
-    }
-  );
-};
+        // Append instead of replacing
+        setForm((prev) => ({
+          ...prev,
+          address: prev.address
+            ? `${prev.address} (${mapsLink})`
+            : mapsLink
+        }));
+
+        setLoadingLocation(false);
+      },
+      () => {
+        alert("Could not get location");
+        setLoadingLocation(false);
+      }
+    );
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,7 +68,11 @@ Name: ${form.name}
 Phone: ${form.phone}
 Service: ${form.service}
 Details: ${form.details}
-Address: ${form.address}
+
+Address:
+${form.address}
+${form.city}, ${form.zip}
+
 Date: ${form.date}
 Time: ${form.time}
 `;
@@ -120,7 +134,7 @@ Time: ${form.time}
           </div>
         </div>
 
-        {/* Clickable Services */}
+        {/* Services */}
         <div className="grid grid-cols-3 gap-4">
           {tools.map(({ icon: Icon, label }) => (
             <div
@@ -176,22 +190,41 @@ Time: ${form.time}
             className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
           />
 
-          {/* Location */}
-          <div className="flex gap-2">
+          {/* FULL ADDRESS */}
+          <input
+            placeholder="Street Address (123 Main St)"
+            required
+            value={form.address}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
+            className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
+          />
+
+          <div className="grid grid-cols-2 gap-2">
             <input
-              placeholder="Address"
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-              className="w-full p-3 rounded-xl bg-black/30 border border-white/10"
+              placeholder="City"
+              required
+              value={form.city}
+              onChange={(e) => setForm({ ...form, city: e.target.value })}
+              className="p-3 rounded-xl bg-black/30 border border-white/10"
             />
-            <button
-              type="button"
-              onClick={handleLocation}
-              className="px-3 bg-[#FF7A1A] rounded-xl"
-            >
-              <Locate />
-            </button>
+
+            <input
+              placeholder="ZIP Code"
+              required
+              value={form.zip}
+              onChange={(e) => setForm({ ...form, zip: e.target.value })}
+              className="p-3 rounded-xl bg-black/30 border border-white/10"
+            />
           </div>
+
+          <button
+            type="button"
+            onClick={handleLocation}
+            className="text-sm text-[#FF7A1A] flex items-center gap-2"
+          >
+            <Locate className="w-4 h-4" />
+            Use my location (optional)
+          </button>
 
           {/* Date */}
           <div className="flex items-center gap-2 p-3 border rounded-xl border-white/10">
