@@ -14,7 +14,7 @@ export default function Preview() {
     city: "",
     zip: "",
     date: "",
-    contactMethod: "call" // default better for conversion
+    contactMethod: "" // ❗ no default now
   });
 
   const [selectedServices, setSelectedServices] = useState([]);
@@ -95,6 +95,12 @@ export default function Preview() {
 
   const handleSubmit = () => {
 
+    // ❗ Force user to choose contact method
+    if (!form.contactMethod) {
+      alert("Please choose how you want us to contact you");
+      return;
+    }
+
     const servicesList = selectedServices
       .map(s => `${s.label} x${s.qty} - $${s.price * s.qty}`)
       .join("\n");
@@ -105,6 +111,9 @@ Phone: ${form.phone}
 
 Services:
 ${servicesList}
+
+Details:
+${form.details}
 
 Total: $${finalTotal}
 
@@ -189,6 +198,14 @@ Date: ${form.date}
         <input placeholder="Phone" required className="w-full p-3 bg-black/30 rounded"
           onChange={(e) => setForm({ ...form, phone: e.target.value })} />
 
+        {/* ✅ Notes back */}
+        <textarea
+          placeholder="Describe your job (number of items, brand, special requests...)"
+          value={form.details}
+          onChange={(e) => setForm({ ...form, details: e.target.value })}
+          className="w-full p-3 rounded bg-black/30"
+        />
+
         <input placeholder="Street Address" required className="w-full p-3 bg-black/30 rounded"
           onChange={(e) => setForm({ ...form, address: e.target.value })} />
 
@@ -209,12 +226,14 @@ Date: ${form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })} />
         </div>
 
-        {/* Contact Method */}
+        {/* ❗ Force selection */}
         <select
+          required
           value={form.contactMethod}
           onChange={(e) => setForm({ ...form, contactMethod: e.target.value })}
           className="w-full p-3 rounded bg-black/30"
         >
+          <option value="">Choose how we contact you</option>
           <option value="call">Call Me</option>
           <option value="whatsapp">WhatsApp</option>
           <option value="sms">Text Message</option>
@@ -222,7 +241,7 @@ Date: ${form.date}
 
       </div>
 
-      {/* Sticky Submit */}
+      {/* Sticky Button */}
       <div className="fixed bottom-0 left-0 w-full bg-[#0B1020] border-t border-white/10 p-4">
         <button
           onClick={handleSubmit}
