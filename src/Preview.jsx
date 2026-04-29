@@ -14,62 +14,39 @@ export default function Preview() {
     city: "",
     zip: "",
     date: "",
+    time: "",
     contactMethod: "whatsapp"
   });
 
-  const [selectedServices, setSelectedServices] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [qty, setQty] = useState(1);
   const [submitted, setSubmitted] = useState(false);
 
-  const services = [
+  const tools = [
     { icon: Drill, label: "Desk / Table", price: 110 },
     { icon: Hammer, label: "King Bed", price: 220 },
     { icon: Hammer, label: "Queen Bed", price: 195 },
     { icon: Wrench, label: "Chair", price: 65 },
-    { icon: Tv, label: "TV Stand", price: 140 },
-    { icon: Armchair, label: "Bookcase", price: 120 },
-    { icon: Dumbbell, label: "Dresser", price: 130 },
-    { icon: Armchair, label: "Couch", price: 140 },
-    { icon: Wrench, label: "Shelves", price: 110 },
+    { icon: Tv, label: "TV Mounting", price: 140 },
+    { icon: Armchair, label: "Shelving", price: 110 },
+    { icon: Dumbbell, label: "Fitness Equipment", price: 130 },
+    { icon: Wrench, label: "Small Fixes", price: 90 },
     { icon: Hammer, label: "Cabinets", price: 150 },
   ];
 
-  const toggleService = (service) => {
-    const exists = selectedServices.find(s => s.label === service.label);
-
-    if (exists) {
-      setSelectedServices(selectedServices.filter(s => s.label !== service.label));
-    } else {
-      setSelectedServices([...selectedServices, { ...service, qty: 1 }]);
-    }
-  };
-
-  const updateQty = (label, qty) => {
-    setSelectedServices(prev =>
-      prev.map(s =>
-        s.label === label ? { ...s, qty: Math.max(1, qty) } : s
-      )
-    );
-  };
-
-  const total = selectedServices.reduce(
-    (sum, s) => sum + s.price * s.qty,
-    0
-  );
-
-  const itemCount = selectedServices.reduce(
-    (sum, s) => sum + s.qty,
-    0
-  );
+  // 💰 Pricing
+  const baseTotal = selected ? selected.price * qty : 0;
 
   let discount = 0;
-  if (itemCount >= 4) discount = 0.15;
-  else if (itemCount >= 2) discount = 0.10;
+  if (qty >= 3) discount = 0.15;
+  else if (qty >= 2) discount = 0.10;
 
-  const discountedTotal = Math.round(total * (1 - discount));
+  const discounted = Math.round(baseTotal * (1 - discount));
 
+  // 🚗 Travel fee (simple + lower)
   const getTravelFee = (zip) => {
-    if (!zip) return 0;
     const z = parseInt(zip);
+    if (!z) return 0;
 
     if (z >= 75000 && z <= 75399) return 0;
     if (z >= 75400 && z <= 75999) return 15;
@@ -79,7 +56,7 @@ export default function Preview() {
   };
 
   const travelFee = getTravelFee(form.zip);
-  const finalTotal = discountedTotal + travelFee;
+  const finalTotal = discounted + travelFee;
 
   const handleLocation = () => {
     if (!navigator.geolocation) return;
@@ -97,30 +74,28 @@ export default function Preview() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const servicesList = selectedServices
-      .map(s => `${s.label} x${s.qty} - $${s.price * s.qty}`)
-      .join("\n");
-
     const message = `New Booking Request:
 Name: ${form.name}
 Phone: ${form.phone}
 
-Services:
-${servicesList}
+Service: ${selected?.label}
+Quantity: ${qty}
 
-Items: ${itemCount}
-Subtotal: $${total}
+Subtotal: $${baseTotal}
 Discount: ${discount * 100}%
-After Discount: $${discountedTotal}
+After Discount: $${discounted}
 Travel Fee: $${travelFee}
 
 Final Total: $${finalTotal}
+
+Details: ${form.details}
 
 Address:
 ${form.address}
 ${form.city}, ${form.zip}
 
 Date: ${form.date}
+Time: ${form.time}
 `;
 
     window.open(`https://wa.me/12142519820?text=${encodeURIComponent(message)}`, "_blank");
@@ -129,55 +104,69 @@ Date: ${form.date}
   };
 
   return (
-    <div className="bg-[#0B1020] text-white min-h-screen">
+    <div className="min-h-[80vh] bg-[#0B1020] text-white">
 
-      <div className="p-4 text-xl font-bold">Pro Assembly</div>
+      {/* Header */}
+      <header className="flex justify-between p-4 border-b border-white/10">
+        <div className="font-bold">Pro Assembly</div>
+        <a href="tel:+12142519820" className="bg-green-600 px-3 py-2 rounded flex items-center gap-2">
+          <Phone className="w-4 h-4" /> Call
+        </a>
+      </header>
 
-      {/* Services */}
-      <div className="grid grid-cols-2 gap-3 p-4">
-        {services.map((s) => {
-          const selected = selectedServices.find(x => x.label === s.label);
-
-          return (
-            <div
-              key={s.label}
-              onClick={() => toggleService(s)}
-              className={`p-4 rounded-xl border text-center cursor-pointer ${
-                selected ? "bg-orange-500" : "border-white/10"
-              }`}
-            >
-              <s.icon className="mx-auto mb-2" />
-              <div>{s.label}</div>
-              <div className="font-bold">${s.price}</div>
-            </div>
-          );
-        })}
+      {/* Hero */}
+      <div className="p-6">
+        <h1 className="text-3xl font-bold">Furniture Assembly in Dallas</h1>
+        <p className="opacity-70 mt-2">Fast, reliable service</p>
       </div>
 
-      {/* Quantity */}
-      <div className="px-4 space-y-2">
-        {selectedServices.map((s) => (
-          <div key={s.label} className="flex justify-between items-center bg-black/30 p-2 rounded">
-            <div>{s.label}</div>
-            <div className="flex gap-2 items-center">
-              <button onClick={() => updateQty(s.label, s.qty - 1)}>-</button>
-              <span>{s.qty}</span>
-              <button onClick={() => updateQty(s.label, s.qty + 1)}>+</button>
-            </div>
+      {/* Services */}
+      <div className="grid grid-cols-3 gap-3 p-4">
+        {tools.map((t) => (
+          <div
+            key={t.label}
+            onClick={() => {
+              setSelected(t);
+              setQty(1);
+            }}
+            className={`p-3 rounded-xl text-center cursor-pointer border ${
+              selected?.label === t.label
+                ? "bg-orange-500"
+                : "border-white/10"
+            }`}
+          >
+            <t.icon className="mx-auto mb-1" />
+            <div className="text-xs">{t.label}</div>
+            <div className="text-sm font-bold">${t.price}</div>
           </div>
         ))}
       </div>
 
-      {/* Summary */}
-      <div className="p-4 bg-black/30 m-4 rounded-xl">
-        <div>Items: {itemCount}</div>
-        <div>Subtotal: ${total}</div>
-        <div>Discount: {discount * 100}%</div>
-        <div>Travel Fee: ${travelFee}</div>
-        <div className="text-green-400 font-bold text-lg">
-          Final: ${finalTotal}
+      {/* Quantity */}
+      {selected && (
+        <div className="px-4">
+          <div className="flex justify-between items-center bg-black/30 p-3 rounded">
+            <span>{selected.label}</span>
+            <div className="flex gap-3 items-center">
+              <button onClick={() => setQty(Math.max(1, qty - 1))}>-</button>
+              <span>{qty}</span>
+              <button onClick={() => setQty(qty + 1)}>+</button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Summary */}
+      {selected && (
+        <div className="p-4 m-4 bg-black/30 rounded">
+          <div>Subtotal: ${baseTotal}</div>
+          <div>Discount: {discount * 100}%</div>
+          <div>Travel Fee: ${travelFee}</div>
+          <div className="text-green-400 font-bold text-lg">
+            Total: ${finalTotal}
+          </div>
+        </div>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="p-4 space-y-3">
@@ -187,6 +176,9 @@ Date: ${form.date}
 
         <input placeholder="Phone" required className="w-full p-3 bg-black/30 rounded"
           onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+
+        <textarea placeholder="Details" className="w-full p-3 bg-black/30 rounded"
+          onChange={(e) => setForm({ ...form, details: e.target.value })} />
 
         <input placeholder="Street Address" required className="w-full p-3 bg-black/30 rounded"
           onChange={(e) => setForm({ ...form, address: e.target.value })} />
@@ -202,8 +194,24 @@ Date: ${form.date}
           <Locate className="w-4 h-4" /> Use my location
         </button>
 
-        <input type="date" required className="w-full p-3 bg-black/30 rounded"
-          onChange={(e) => setForm({ ...form, date: e.target.value })} />
+        <div className="flex items-center gap-2 bg-black/30 p-3 rounded">
+          <Calendar />
+          <input type="date" required className="bg-transparent w-full"
+            onChange={(e) => setForm({ ...form, date: e.target.value })} />
+        </div>
+
+        <div className="flex gap-2">
+          {["Morning", "Afternoon", "Evening"].map((t) => (
+            <button type="button" key={t}
+              onClick={() => setForm({ ...form, time: t })}
+              className={`flex-1 p-2 rounded ${
+                form.time === t ? "bg-orange-500" : "bg-black/30"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
 
         <button className="w-full bg-orange-500 p-3 rounded font-bold">
           Submit Booking
