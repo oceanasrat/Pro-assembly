@@ -171,6 +171,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
         </p>
 
         <button 
+          type="button"
           onClick={scrollToForm}
           className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(249,115,22,0.4)] w-full max-w-xs transition-all active:scale-95"
         >
@@ -184,7 +185,9 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
         {/* Social Proof */}
         <div className="bg-[#0B1020] border border-white/10 p-4 rounded-xl text-center shadow-lg">
           <div className="flex justify-center gap-1 mb-2">
-            {.map(i => <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />)}
+            {.map(i => (
+              <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+            ))}
           </div>
           <p className="italic text-white/80 text-sm mb-2">"Saved my entire weekend! They arrived on time, built my entire bedroom set in 2 hours, and took all the trash."</p>
           <div className="text-xs text-white/50 font-bold uppercase tracking-wider">— Verified Customer</div>
