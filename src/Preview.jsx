@@ -31,11 +31,8 @@ export default function Preview() {
     { icon: Armchair, label: "Couch", price: 140 },
     { icon: Wrench, label: "Shelves", price: 110 },
     { icon: Hammer, label: "Cabinets", price: 150 },
-    { icon: Drill, label: "Outdoor Furniture", price: 140 },
-    { icon: Hammer, label: "Pool Table", price: 220 },
   ];
 
-  // Toggle + quantity
   const toggleService = (service) => {
     const exists = selectedServices.find(s => s.label === service.label);
 
@@ -54,7 +51,6 @@ export default function Preview() {
     );
   };
 
-  // 💰 Total calculation
   const total = selectedServices.reduce(
     (sum, s) => sum + s.price * s.qty,
     0
@@ -65,14 +61,12 @@ export default function Preview() {
     0
   );
 
-  // 🎯 Discount
   let discount = 0;
   if (itemCount >= 4) discount = 0.15;
   else if (itemCount >= 2) discount = 0.10;
 
   const discountedTotal = Math.round(total * (1 - discount));
 
-  // 🚗 Travel Fee (lower)
   const getTravelFee = (zip) => {
     if (!zip) return 0;
     const z = parseInt(zip);
@@ -160,7 +154,7 @@ Date: ${form.date}
         })}
       </div>
 
-      {/* Quantity Controls */}
+      {/* Quantity */}
       <div className="px-4 space-y-2">
         {selectedServices.map((s) => (
           <div key={s.label} className="flex justify-between items-center bg-black/30 p-2 rounded">
