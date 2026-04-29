@@ -29,22 +29,26 @@ export default function Preview() {
   ];
 
   const handleLocation = () => {
-    if (!navigator.geolocation) return;
+  if (!navigator.geolocation) return;
 
-    setLoadingLocation(true);
+  setLoadingLocation(true);
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const coords = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-        setForm({ ...form, address: coords });
-        setLoadingLocation(false);
-      },
-      () => {
-        alert("Could not get location");
-        setLoadingLocation(false);
-      }
-    );
-  };
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+
+      const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
+      setForm({ ...form, address: mapsLink });
+      setLoadingLocation(false);
+    },
+    () => {
+      alert("Could not get location");
+      setLoadingLocation(false);
+    }
+  );
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
