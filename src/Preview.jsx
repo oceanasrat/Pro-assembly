@@ -14,11 +14,10 @@ export default function Preview() {
     city: "",
     zip: "",
     date: "",
-    contactMethod: "whatsapp"
+    contactMethod: "call" // default better for conversion
   });
 
   const [selectedServices, setSelectedServices] = useState([]);
-  const [submitted, setSubmitted] = useState(false);
 
   const services = [
     { icon: Drill, label: "Desk / Table", price: 110 },
@@ -94,9 +93,7 @@ export default function Preview() {
     });
   };
 
-  // FIXED: works with sticky button
-  const handleSubmit = (e) => {
-    if (e) e.preventDefault();
+  const handleSubmit = () => {
 
     const servicesList = selectedServices
       .map(s => `${s.label} x${s.qty} - $${s.price * s.qty}`)
@@ -109,13 +106,7 @@ Phone: ${form.phone}
 Services:
 ${servicesList}
 
-Items: ${itemCount}
-Subtotal: $${total}
-Discount: ${discount * 100}%
-After Discount: $${discountedTotal}
-Travel Fee: $${travelFee}
-
-Final Total: $${finalTotal}
+Total: $${finalTotal}
 
 Address:
 ${form.address}
@@ -124,9 +115,19 @@ ${form.city}, ${form.zip}
 Date: ${form.date}
 `;
 
-    window.open(`https://wa.me/12142519820?text=${encodeURIComponent(message)}`, "_blank");
+    const phoneNumber = "12142519820";
 
-    setSubmitted(true);
+    if (form.contactMethod === "whatsapp") {
+      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
+    }
+
+    if (form.contactMethod === "call") {
+      window.location.href = `tel:${phoneNumber}`;
+    }
+
+    if (form.contactMethod === "sms") {
+      window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+    }
   };
 
   return (
@@ -171,17 +172,16 @@ Date: ${form.date}
 
       {/* Summary */}
       <div className="p-4 bg-black/30 m-4 rounded-xl">
-        <div>Items: {itemCount}</div>
         <div>Subtotal: ${total}</div>
         <div>Discount: {discount * 100}%</div>
         <div>Travel Fee: ${travelFee}</div>
         <div className="text-green-400 font-bold text-lg">
-          Final: ${finalTotal}
+          Total: ${finalTotal}
         </div>
       </div>
 
       {/* Form */}
-      <form className="p-4 space-y-3">
+      <div className="p-4 space-y-3">
 
         <input placeholder="Name" required className="w-full p-3 bg-black/30 rounded"
           onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -209,15 +209,26 @@ Date: ${form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })} />
         </div>
 
-      </form>
+        {/* Contact Method */}
+        <select
+          value={form.contactMethod}
+          onChange={(e) => setForm({ ...form, contactMethod: e.target.value })}
+          className="w-full p-3 rounded bg-black/30"
+        >
+          <option value="call">Call Me</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="sms">Text Message</option>
+        </select>
 
-      {/* ✅ Sticky Submit Button */}
+      </div>
+
+      {/* Sticky Submit */}
       <div className="fixed bottom-0 left-0 w-full bg-[#0B1020] border-t border-white/10 p-4">
         <button
           onClick={handleSubmit}
           className="w-full bg-orange-500 p-4 rounded-xl font-bold text-lg"
         >
-          Submit Booking (${finalTotal})
+          Continue (${finalTotal})
         </button>
       </div>
 
