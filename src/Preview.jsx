@@ -8,7 +8,6 @@ export default function Preview() {
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    service: "",
     details: "",
     address: "",
     city: "",
@@ -18,23 +17,62 @@ export default function Preview() {
     contactMethod: "whatsapp"
   });
 
-  const [selectedPrice, setSelectedPrice] = useState(null);
+  const [selectedServices, setSelectedServices] = useState([]);
   const [submitted, setSubmitted] = useState(false);
 
-  const tools = [
-    { icon: Drill, label: "Desk / Table", price: 69 },
-    { icon: Hammer, label: "Bed Frame", price: 79 },
-    { icon: Wrench, label: "Chair", price: 49 },
-    { icon: Tv, label: "TV Stand", price: 89 },
-    { icon: Armchair, label: "Bookcase", price: 79 },
-    { icon: Dumbbell, label: "Fitness Equipment", price: 85 },
-    { icon: Hammer, label: "Outdoor Furniture", price: 89 },
-    { icon: Wrench, label: "Cabinets", price: 89 },
-    { icon: Armchair, label: "Couch", price: 85 },
-    { icon: Drill, label: "Crib", price: 79 },
-    { icon: Wrench, label: "Shelves", price: 75 },
-    { icon: Hammer, label: "Pool Table", price: 159 },
+  const services = [
+    { icon: Drill, label: "Desk / Table", price: 110 },
+    { icon: Hammer, label: "King Bed", price: 220 },
+    { icon: Hammer, label: "Queen Bed", price: 195 },
+    { icon: Wrench, label: "Chair", price: 65 },
+    { icon: Tv, label: "TV Stand", price: 140 },
+    { icon: Armchair, label: "Bookcase", price: 120 },
+    { icon: Dumbbell, label: "Dresser", price: 130 },
+    { icon: Armchair, label: "Couch", price: 140 },
+    { icon: Wrench, label: "Shelves", price: 110 },
+    { icon: Hammer, label: "Cabinets", price: 150 },
+    { icon: Drill, label: "Outdoor Furniture", price: 140 },
+    { icon: Hammer, label: "Pool Table", price: 220 },
   ];
+
+  const toggleService = (service) => {
+    const exists = selectedServices.find(s => s.label === service.label);
+
+    if (exists) {
+      setSelectedServices(selectedServices.filter(s => s.label !== service.label));
+    } else {
+      setSelectedServices([...selectedServices, service]);
+    }
+  };
+
+  // 💰 Base total
+  const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
+
+  // 🎯 Discount
+  let discount = 0;
+  if (selectedServices.length >= 3) discount = 0.15;
+  else if (selectedServices.length >= 2) discount = 0.10;
+
+  const discountedTotal = Math.round(total * (1 - discount));
+
+  // 🚗 Travel Fee (ZIP based logic)
+  const getTravelFee = (zip) => {
+    if (!zip) return 0;
+
+    const zipNum = parseInt(zip);
+
+    // Dallas core ZIPs ~75000–75399
+    if (zipNum >= 75000 && zipNum <= 75399) return 0;
+
+    if (zipNum >= 75400 && zipNum <= 75999) return 25;
+    if (zipNum >= 76000 && zipNum <= 76999) return 40;
+
+    return 60;
+  };
+
+  const travelFee = getTravelFee(form.zip);
+
+  const finalTotal = discountedTotal + travelFee;
 
   const handleLocation = () => {
     if (!navigator.geolocation) return;
@@ -56,20 +94,23 @@ export default function Preview() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const discounted = selectedPrice
-      ? Math.round(selectedPrice * 0.9)
-      : "";
+    const servicesList = selectedServices
+      .map(s => `${s.label} - $${s.price}`)
+      .join("\n");
 
     const message = `New Booking Request:
 Name: ${form.name}
 Phone: ${form.phone}
-Service: ${form.service}
 
-Price:
-Original: $${selectedPrice}
-Discounted: $${discounted}
+Services:
+${servicesList}
 
-Details: ${form.details}
+Subtotal: $${total}
+Discount: ${discount * 100}%
+After Discount: $${discountedTotal}
+Travel Fee: $${travelFee}
+
+Final Total: $${finalTotal}
 
 Address:
 ${form.address}
@@ -81,183 +122,103 @@ Time: ${form.time}
 
     const phoneNumber = "12142519820";
 
-    if (form.contactMethod === "whatsapp") {
-      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
-    }
-
-    if (form.contactMethod === "call") {
-      window.location.href = `tel:${phoneNumber}`;
-    }
-
-    if (form.contactMethod === "sms") {
-      window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
-    }
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
 
     setSubmitted(true);
   };
 
   return (
-    <div className="min-h-[80vh] bg-[#0B1020] text-[#E6EDF3]">
+    <div className="bg-[#0B1020] text-white min-h-screen">
 
-      {/* Header */}
-      <header className="flex justify-between p-4 border-b border-white/10">
-        <div className="font-bold">Pro Assembly</div>
-        <a href="tel:+12142519820" className="bg-green-600 px-3 py-2 rounded-lg flex items-center gap-2">
-          <Phone className="w-4 h-4" /> Call
-        </a>
-      </header>
-
-      {/* Hero */}
-      <div className="p-6">
-        <h1 className="text-3xl font-bold">Furniture Assembly in Dallas</h1>
-        <p className="opacity-70 mt-2">Fast, affordable, same-day service</p>
-      </div>
+      <div className="p-4 text-xl font-bold">Pro Assembly</div>
 
       {/* Services */}
       <div className="grid grid-cols-2 gap-3 p-4">
-        {tools.map(({ icon: Icon, label, price }) => {
-          const discounted = Math.round(price * 0.9);
+        {services.map((s) => {
+          const selected = selectedServices.find(x => x.label === s.label);
 
           return (
             <div
-              key={label}
-              onClick={() => {
-                setForm({ ...form, service: label });
-                setSelectedPrice(price);
-              }}
-              className={`p-4 rounded-xl border cursor-pointer text-center ${
-                form.service === label
-                  ? "bg-[#FF7A1A] text-white"
-                  : "border-white/10"
+              key={s.label}
+              onClick={() => toggleService(s)}
+              className={`p-4 rounded-xl cursor-pointer text-center border ${
+                selected ? "bg-orange-500" : "border-white/10"
               }`}
             >
-              <Icon className="mx-auto mb-2" />
-              <div className="text-sm font-semibold">{label}</div>
-
-              <div className="line-through text-xs opacity-60">
-                ${price}
-              </div>
-              <div className="text-green-400 font-bold">
-                ${discounted}
-              </div>
+              <s.icon className="mx-auto mb-2" />
+              <div>{s.label}</div>
+              <div className="font-bold">${s.price}</div>
             </div>
           );
         })}
       </div>
 
-      {/* Booking */}
-      <div className="p-4">
+      {/* Pricing Summary */}
+      <div className="p-4 bg-black/30 m-4 rounded-xl space-y-1">
+        <div>Subtotal: ${total}</div>
+        <div>Discount: {discount * 100}%</div>
+        <div>After Discount: ${discountedTotal}</div>
+        <div>Travel Fee: ${travelFee}</div>
+        <div className="font-bold text-green-400 text-lg">
+          Final: ${finalTotal}
+        </div>
+      </div>
 
-        <div className="bg-[#FF7A1A] p-2 rounded-lg text-center mb-4">
-          🎉 First-time customers get 10% OFF
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="p-4 space-y-3">
+
+        <input
+          placeholder="Name"
+          required
+          className="w-full p-3 bg-black/30 rounded"
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
+
+        <input
+          placeholder="Phone"
+          required
+          className="w-full p-3 bg-black/30 rounded"
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+        />
+
+        <input
+          placeholder="Street Address"
+          required
+          className="w-full p-3 bg-black/30 rounded"
+          onChange={(e) => setForm({ ...form, address: e.target.value })}
+        />
+
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            placeholder="City"
+            required
+            className="p-3 bg-black/30 rounded"
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
+          />
+          <input
+            placeholder="ZIP"
+            required
+            className="p-3 bg-black/30 rounded"
+            onChange={(e) => setForm({ ...form, zip: e.target.value })}
+          />
         </div>
 
-        {submitted && (
-          <div className="bg-green-600 p-2 rounded mb-3 text-center">
-            ✅ Request sent!
-          </div>
-        )}
+        <button type="button" onClick={handleLocation} className="text-sm text-orange-400 flex items-center gap-1">
+          <Locate className="w-4 h-4" /> Use my location
+        </button>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="date"
+          required
+          className="w-full p-3 bg-black/30 rounded"
+          onChange={(e) => setForm({ ...form, date: e.target.value })}
+        />
 
-          <input
-            placeholder="Name"
-            required
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full p-3 rounded bg-black/30"
-          />
+        <button className="w-full bg-orange-500 p-3 rounded font-bold">
+          Submit Booking
+        </button>
 
-          <input
-            placeholder="Phone"
-            required
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            className="w-full p-3 rounded bg-black/30"
-          />
-
-          <textarea
-            placeholder="Details"
-            value={form.details}
-            onChange={(e) => setForm({ ...form, details: e.target.value })}
-            className="w-full p-3 rounded bg-black/30"
-          />
-
-          {/* Address */}
-          <input
-            placeholder="Street Address"
-            required
-            value={form.address}
-            onChange={(e) => setForm({ ...form, address: e.target.value })}
-            className="w-full p-3 rounded bg-black/30"
-          />
-
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              placeholder="City"
-              required
-              value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
-              className="p-3 rounded bg-black/30"
-            />
-            <input
-              placeholder="ZIP"
-              required
-              value={form.zip}
-              onChange={(e) => setForm({ ...form, zip: e.target.value })}
-              className="p-3 rounded bg-black/30"
-            />
-          </div>
-
-          <button type="button" onClick={handleLocation} className="text-sm text-orange-400 flex items-center gap-1">
-            <Locate className="w-4 h-4" /> Use my location
-          </button>
-
-          {/* Date */}
-          <div className="flex items-center gap-2 bg-black/30 p-3 rounded">
-            <Calendar />
-            <input
-              type="date"
-              required
-              value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="bg-transparent w-full"
-            />
-          </div>
-
-          {/* Time */}
-          <div className="flex gap-2">
-            {["Morning", "Afternoon", "Evening"].map((t) => (
-              <button
-                type="button"
-                key={t}
-                onClick={() => setForm({ ...form, time: t })}
-                className={`flex-1 p-2 rounded ${
-                  form.time === t ? "bg-orange-500" : "bg-black/30"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
-          {/* Contact */}
-          <select
-            value={form.contactMethod}
-            onChange={(e) => setForm({ ...form, contactMethod: e.target.value })}
-            className="w-full p-3 rounded bg-black/30"
-          >
-            <option value="whatsapp">WhatsApp</option>
-            <option value="call">Call</option>
-            <option value="sms">SMS</option>
-          </select>
-
-          <button className="w-full bg-[#FF7A1A] py-3 rounded font-bold">
-            Submit Booking
-          </button>
-
-        </form>
-      </div>
+      </form>
 
     </div>
   );
