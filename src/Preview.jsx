@@ -79,7 +79,8 @@ export default function Preview() {
     }
 
     navigator.geolocation.getCurrentPosition((pos) => {
-      const link = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
+      // ✅ Corrected Google Maps URL
+      const link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
       setForm(prev => ({
         ...prev,
         address: prev.address ? `${prev.address} (${link})` : link
@@ -97,12 +98,12 @@ export default function Preview() {
     e.preventDefault();
 
     if (selectedServices.length === 0) {
-      alert("Please select at least one service to continue.");
+      alert("Please select at least one item to build.");
       return;
     }
 
     if (!form.contactMethod) {
-      alert("Please choose how you want us to contact you.");
+      alert("Please choose a contact method.");
       return;
     }
 
@@ -120,17 +121,17 @@ ${servicesList}
 Details:
 ${form.details || "None provided"}
 
+Pricing Breakdown:
 Subtotal: $${total}
-Discount Applied: ${discount * 100}%
+Discount: ${discount * 100}%
 Travel Fee: $${travelFee}
-Total: $${finalTotal}
+Final Total: $${finalTotal}
 
-Address:
+Location:
 ${form.address}
 ${form.city}, ${form.zip}
 
 Date: ${form.date}
-Contact Preference: ${form.contactMethod.toUpperCase()}
 `;
 
     if (form.contactMethod === "whatsapp") {
@@ -150,7 +151,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
       {/* Sticky Header */}
       <div className="sticky top-0 z-40 bg-[#0B1020]/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center shadow-md">
         <div className="font-extrabold text-xl tracking-tight text-white">Pro <span className="text-orange-500">Assembly</span></div>
-        <a href={`tel:${phoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 active:bg-orange-500/20">
+        <a href={`tel:${phoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 active:bg-orange-500/30 transition-all">
           <PhoneCall className="w-4 h-4" /> Call Now
         </a>
       </div>
@@ -164,10 +165,10 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
           Professional Furniture Assembly in Rowlett & DFW
         </h1>
-        <p className="text-orange-400 font-bold text-lg mb-4">Fast. Insured. Stress-Free.</p>
+        <p className="text-orange-400 font-bold text-lg mb-4 underline decoration-orange-500/30 underline-offset-4">Fast. Insured. Stress-Free.</p>
         
         <p className="text-white/70 text-sm md:text-base max-w-md mx-auto mb-6 leading-relaxed">
-          Skip the headaches and confusing manuals. Our expert technicians provide flat-pack assembly with same-day availability and a free, instant quote.
+          Forget the confusing manuals. Our expert technicians handle everything from IKEA sets to complex gym equipment with same-day availability.
         </p>
 
         <button 
@@ -182,62 +183,71 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
       {/* Trust & Benefits Section */}
       <div className="px-4 py-6 space-y-6 border-b border-white/10 bg-white/5">
         
-        {/* Social Proof */}
-        <div className="bg-[#0B1020] border border-white/10 p-4 rounded-xl text-center shadow-lg">
+        {/* Social Proof - Hardcoded Stars to avoid Map Error */}
+        <div className="bg-[#0B1020] border border-white/10 p-5 rounded-xl text-center shadow-lg">
           <div className="flex justify-center gap-1 mb-2">
-            {.map(i => (
-              <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-            ))}
+            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
           </div>
           <p className="italic text-white/80 text-sm mb-2">"Saved my entire weekend! They arrived on time, built my entire bedroom set in 2 hours, and took all the trash."</p>
-          <div className="text-xs text-white/50 font-bold uppercase tracking-wider">— Verified Customer</div>
+          <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">— Verified Local Customer</div>
         </div>
 
         {/* Benefits Bullet Points */}
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-4">
           <div className="flex items-center gap-3">
-            <Package className="w-6 h-6 text-orange-400 shrink-0" />
-            <span className="text-sm font-medium">Flat-pack & IKEA Experts</span>
+            <div className="p-2 bg-orange-500/10 rounded-lg"><Package className="w-5 h-5 text-orange-400" /></div>
+            <span className="text-sm font-semibold">Flat-pack & IKEA Experts</span>
           </div>
           <div className="flex items-center gap-3">
-            <ThumbsUp className="w-6 h-6 text-orange-400 shrink-0" />
-            <span className="text-sm font-medium">100% Satisfaction Guarantee</span>
+            <div className="p-2 bg-orange-500/10 rounded-lg"><ThumbsUp className="w-5 h-5 text-orange-400" /></div>
+            <span className="text-sm font-semibold">100% Satisfaction Guarantee</span>
           </div>
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-6 h-6 text-orange-400 shrink-0" />
-            <span className="text-sm font-medium">Fully Insured & Affordable Rates</span>
+            <div className="p-2 bg-orange-500/10 rounded-lg"><ShieldCheck className="w-5 h-5 text-orange-400" /></div>
+            <span className="text-sm font-semibold">Fully Insured & Professional</span>
           </div>
         </div>
 
         {/* How It Works */}
-        <div className="bg-gradient-to-br from-orange-500/10 to-transparent p-5 rounded-xl border border-orange-500/20">
-          <h3 className="font-bold text-orange-400 mb-4 flex items-center gap-2"><Clock className="w-5 h-5"/> How It Works</h3>
-          <ol className="space-y-3 relative border-l border-white/10 ml-2.5">
-            <li className="pl-6 relative">
-              <span className="absolute -left-2.5 top-0 bg-[#0B1020] border border-orange-500 text-orange-500 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">1</span>
-              <div className="font-bold text-sm">Select Your Items</div>
-              <div className="text-xs text-white/60">Choose your furniture below for an instant quote.</div>
-            </li>
-            <li className="pl-6 relative">
-              <span className="absolute -left-2.5 top-0 bg-[#0B1020] border border-orange-500 text-orange-500 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">2</span>
-              <div className="font-bold text-sm">We Confirm Details</div>
-              <div className="text-xs text-white/60">We review your job and confirm the schedule.</div>
-            </li>
-            <li className="pl-6 relative">
-              <span className="absolute -left-2.5 top-0 bg-orange-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">3</span>
-              <div className="font-bold text-sm">Assembly Done</div>
-              <div className="text-xs text-white/60">Sit back and relax while we build.</div>
-            </li>
-          </ol>
+        <div className="bg-[#0B1020] p-6 rounded-xl border border-white/5">
+          <h3 className="font-bold text-white mb-5 flex items-center gap-2 tracking-tight uppercase text-xs opacity-60">Simple Process</h3>
+          <div className="space-y-6">
+            <div className="flex gap-4">
+              <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold shrink-0">1</div>
+              <div>
+                <div className="font-bold text-sm">Select Items</div>
+                <div className="text-xs text-white/50">Choose what you need built below.</div>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold shrink-0">2</div>
+              <div>
+                <div className="font-bold text-sm">Instant Quote</div>
+                <div className="text-xs text-white/50">See your final price immediately.</div>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-xs font-bold shrink-0">3</div>
+              <div>
+                <div className="font-bold text-sm">We Assemble</div>
+                <div className="text-xs text-white/50">We arrive, build, and clean up.</div>
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
 
+      {/* Booking Form Wrapper */}
       <form id="booking-section" onSubmit={handleSubmit} className="pt-4">
+        
         {/* Services Selection */}
         <div className="p-4 pt-6">
-          <h2 className="text-xl font-bold mb-1">Build Your Quote</h2>
-          <p className="text-sm text-white/60 mb-4">Select the items you need assembled below.</p>
+          <h2 className="text-xl font-extrabold mb-1 tracking-tight">Select Items</h2>
+          <p className="text-sm text-white/50 mb-6">Click to add items to your quote.</p>
           
           <div className="grid grid-cols-2 gap-3">
             {services.map((s) => {
@@ -246,102 +256,102 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
                 <div
                   key={s.label}
                   onClick={() => toggleService(s)}
-                  className={`p-4 rounded-xl border text-center cursor-pointer transition-all active:scale-95 ${
+                  className={`p-4 rounded-2xl border transition-all active:scale-95 text-center ${
                     selected 
-                    ? "bg-orange-500 border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)]" 
+                    ? "bg-orange-500 border-orange-400 shadow-lg shadow-orange-500/20" 
                     : "bg-white/5 border-white/10 hover:bg-white/10"
                   }`}
                 >
-                  <s.icon className={`mx-auto mb-2 w-7 h-7 ${selected ? "text-white" : "text-white/60"}`} />
-                  <div className="text-sm font-medium">{s.label}</div>
-                  <div className={`font-bold mt-1 ${selected ? "text-white" : "text-orange-400"}`}>${s.price}</div>
+                  <s.icon className={`mx-auto mb-3 w-6 h-6 ${selected ? "text-white" : "text-white/40"}`} />
+                  <div className="text-xs font-bold uppercase tracking-wide mb-1">{s.label}</div>
+                  <div className={`font-black text-lg ${selected ? "text-white" : "text-orange-400"}`}>${s.price}</div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Quantities */}
+        {/* Quantities (Visible only when items are selected) */}
         {selectedServices.length > 0 && (
           <div className="px-4 space-y-2 animate-in fade-in slide-in-from-top-2">
             {selectedServices.map((s) => (
-              <div key={s.label} className="flex justify-between items-center bg-white/5 border border-white/10 p-3 rounded-lg">
-                <div className="font-medium">{s.label}</div>
-                <div className="flex gap-4 items-center bg-[#0B1020] px-3 py-1 rounded-md border border-white/10">
-                  <button type="button" onClick={() => updateQty(s.label, s.qty - 1)} className="text-xl text-white/60 hover:text-white px-2">-</button>
-                  <span className="font-bold min-w-[20px] text-center">{s.qty}</span>
-                  <button type="button" onClick={() => updateQty(s.label, s.qty + 1)} className="text-xl text-white/60 hover:text-white px-2">+</button>
+              <div key={s.label} className="flex justify-between items-center bg-white/5 border border-white/10 p-4 rounded-xl">
+                <div className="font-bold text-sm">{s.label}</div>
+                <div className="flex gap-5 items-center bg-black/40 px-3 py-1.5 rounded-lg border border-white/10">
+                  <button type="button" onClick={() => updateQty(s.label, s.qty - 1)} className="text-lg font-bold text-white/40 hover:text-white">-</button>
+                  <span className="font-black text-sm">{s.qty}</span>
+                  <button type="button" onClick={() => updateQty(s.label, s.qty + 1)} className="text-lg font-bold text-white/40 hover:text-white">+</button>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Pricing Summary */}
-        <div className="m-4 p-5 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-xl space-y-2 shadow-lg">
-          <div className="flex justify-between text-sm text-white/70">
+        {/* Pricing Breakdown */}
+        <div className="m-4 p-6 bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-2xl space-y-3">
+          <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-white/50">
             <span>Subtotal</span>
             <span>${total}</span>
           </div>
           
           {discount > 0 && (
-            <div className="flex justify-between text-sm text-green-400 font-medium">
-              <span>Multi-Item Discount ({discount * 100}%)</span>
-              <span>-${total - discountedTotal}</span>
+            <div className="flex justify-between text-xs font-bold text-green-400">
+              <span>Multi-Item Discount</span>
+              <span>-{discount * 100}%</span>
             </div>
           )}
           
-          <div className="flex justify-between text-sm text-white/70">
-            <span>Travel Fee (Calculated via ZIP)</span>
+          <div className="flex justify-between text-xs font-bold text-white/50">
+            <span>Travel Fee</span>
             <span>${travelFee}</span>
           </div>
           
-          <div className="pt-3 mt-3 border-t border-white/10 flex justify-between items-center">
-            <span className="font-bold text-lg">Total Quote</span>
-            <span className="text-orange-400 font-extrabold text-2xl">${finalTotal}</span>
+          <div className="pt-4 border-t border-white/10 flex justify-between items-end">
+            <span className="font-bold text-sm uppercase opacity-60 mb-1">Estimated Total</span>
+            <span className="text-orange-400 font-black text-3xl tracking-tighter">${finalTotal}</span>
           </div>
         </div>
 
-        {/* Customer Details Form */}
+        {/* Customer Info Section */}
         <div className="p-4 space-y-4">
-          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+          <h2 className="text-lg font-extrabold mb-2 flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-orange-500" />
-            Final Details
+            Contact Info
           </h2>
 
           <div className="grid grid-cols-2 gap-3">
-            <input placeholder="Full Name" required className="w-full p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors"
+            <input placeholder="Name" required className="w-full p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl transition-all"
               onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <input placeholder="Phone Number" required type="tel" className="w-full p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors"
+            <input placeholder="Phone" required type="tel" className="w-full p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl transition-all"
               onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           </div>
 
           <textarea
-            placeholder="Describe your job (brand, access instructions, elevators?)"
+            placeholder="Special instructions (e.g. 3rd floor, tight spaces, brand name...)"
             value={form.details}
             rows={3}
             onChange={(e) => setForm({ ...form, details: e.target.value })}
-            className="w-full p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors resize-none"
+            className="w-full p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl transition-all resize-none"
           />
 
           <div className="relative">
-            <input placeholder="Street Address" required value={form.address} className="w-full p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors pr-12"
+            <input placeholder="Street Address" required value={form.address} className="w-full p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl transition-all pr-12"
               onChange={(e) => setForm({ ...form, address: e.target.value })} />
-            <button type="button" onClick={handleLocation} title="Use Current Location" className="absolute right-3 top-3.5 text-orange-400 hover:text-orange-300 p-1 bg-orange-400/10 rounded">
+            <button type="button" onClick={handleLocation} className="absolute right-3 top-3 text-orange-400 p-2 bg-orange-400/10 rounded-lg hover:bg-orange-400/20">
               <Locate className="w-5 h-5" />
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <input placeholder="City" required className="p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors"
+            <input placeholder="City" required className="p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl transition-all"
               onChange={(e) => setForm({ ...form, city: e.target.value })} />
-            <input placeholder="ZIP Code" required type="number" className="p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors"
+            <input placeholder="ZIP" required type="number" className="p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl transition-all"
               onChange={(e) => setForm({ ...form, zip: e.target.value })} />
           </div>
 
-          <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-1 rounded-lg focus-within:border-orange-500 transition-colors">
-            <div className="pl-3 text-white/50"><Calendar className="w-5 h-5" /></div>
-            <input type="date" required className="bg-transparent w-full p-2.5 outline-none text-white color-scheme-dark"
+          <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-1.5 rounded-xl">
+            <div className="pl-3 text-white/40"><Calendar className="w-5 h-5" /></div>
+            <input type="date" required className="bg-transparent w-full p-3 outline-none text-white font-bold"
               onChange={(e) => setForm({ ...form, date: e.target.value })} />
           </div>
 
@@ -349,26 +359,28 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
             required
             value={form.contactMethod}
             onChange={(e) => setForm({ ...form, contactMethod: e.target.value })}
-            className="w-full p-3.5 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-lg transition-colors appearance-none"
+            className="w-full p-4 bg-white/5 border border-white/10 focus:border-orange-500 outline-none rounded-xl font-bold appearance-none"
           >
-            <option value="" disabled className="bg-[#0B1020]">Choose how we contact you</option>
+            <option value="" disabled className="bg-[#0B1020]">How should we reach you?</option>
             <option value="call" className="bg-[#0B1020]">Call Me</option>
             <option value="whatsapp" className="bg-[#0B1020]">WhatsApp</option>
             <option value="sms" className="bg-[#0B1020]">Text Message (SMS)</option>
           </select>
         </div>
 
-        {/* Sticky Checkout Button */}
-        <div className="fixed bottom-0 left-0 w-full bg-[#0B1020]/90 backdrop-blur-md border-t border-white/10 p-4 z-50">
+        {/* Sticky CTA Button */}
+        <div className="fixed bottom-0 left-0 w-full bg-[#0B1020]/95 backdrop-blur-lg border-t border-white/10 p-4 z-50">
           <button
             type="submit"
-            className="w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all p-4 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(249,115,22,0.4)] flex justify-between items-center px-6"
+            className="w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all p-5 rounded-2xl font-black text-xl shadow-[0_-5px_30px_rgba(249,115,22,0.3)] flex justify-between items-center px-8"
           >
-            <span>Book Now</span>
-            <span>${finalTotal}</span>
+            <span>BOOK NOW</span>
+            <span className="bg-white/20 px-3 py-1 rounded-lg text-sm">${finalTotal}</span>
           </button>
         </div>
       </form>
     </div>
   );
 }
+
+        
