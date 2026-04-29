@@ -1,6 +1,7 @@
 import {
   Drill, Hammer, Wrench, Tv, Armchair, Dumbbell,
-  Calendar, Locate, ShieldCheck, Star, Zap, CheckCircle2
+  Calendar, Locate, ShieldCheck, Star, Zap, CheckCircle2,
+  PhoneCall, ThumbsUp, Clock, Package
 } from "lucide-react";
 import { useState } from "react";
 
@@ -13,7 +14,7 @@ export default function Preview() {
     city: "",
     zip: "",
     date: "",
-    contactMethod: "" 
+    contactMethod: ""
   });
 
   const [selectedServices, setSelectedServices] = useState([]);
@@ -49,15 +50,8 @@ export default function Preview() {
     );
   };
 
-  const total = selectedServices.reduce(
-    (sum, s) => sum + s.price * s.qty,
-    0
-  );
-
-  const itemCount = selectedServices.reduce(
-    (sum, s) => sum + s.qty,
-    0
-  );
+  const total = selectedServices.reduce((sum, s) => sum + s.price * s.qty, 0);
+  const itemCount = selectedServices.reduce((sum, s) => sum + s.qty, 0);
 
   let discount = 0;
   if (itemCount >= 4) discount = 0.15;
@@ -68,16 +62,15 @@ export default function Preview() {
   const getTravelFee = (zip) => {
     if (!zip) return 0;
     const z = parseInt(zip);
-
     if (z >= 75000 && z <= 75399) return 0;
     if (z >= 75400 && z <= 75999) return 15;
     if (z >= 76000 && z <= 76999) return 25;
-
     return 40;
   };
 
   const travelFee = getTravelFee(form.zip);
   const finalTotal = discountedTotal + travelFee;
+  const phoneNumber = "12142519820";
 
   const handleLocation = () => {
     if (!navigator.geolocation) {
@@ -86,9 +79,7 @@ export default function Preview() {
     }
 
     navigator.geolocation.getCurrentPosition((pos) => {
-      // ✅ Fixed Google Maps URL format
       const link = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
-
       setForm(prev => ({
         ...prev,
         address: prev.address ? `${prev.address} (${link})` : link
@@ -98,8 +89,12 @@ export default function Preview() {
     });
   };
 
+  const scrollToForm = () => {
+    document.getElementById("booking-section").scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleSubmit = (e) => {
-    e.preventDefault(); // ✅ Prevents page reload on form submit
+    e.preventDefault();
 
     if (selectedServices.length === 0) {
       alert("Please select at least one service to continue.");
@@ -138,16 +133,12 @@ Date: ${form.date}
 Contact Preference: ${form.contactMethod.toUpperCase()}
 `;
 
-    const phoneNumber = "12142519820";
-
     if (form.contactMethod === "whatsapp") {
       window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
     }
-
     if (form.contactMethod === "call") {
       window.location.href = `tel:${phoneNumber}`;
     }
-
     if (form.contactMethod === "sms") {
       window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
     }
@@ -156,30 +147,98 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
   return (
     <div className="bg-[#0B1020] text-white min-h-screen pb-32 font-sans selection:bg-orange-500/30">
       
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-orange-500/10 to-[#0B1020] pt-8 pb-6 px-4 text-center border-b border-white/5">
-        <h1 className="text-3xl font-extrabold tracking-tight mb-2">Pro Assembly Services</h1>
-        <p className="text-white/60 text-sm mb-5">Fast, reliable, and professional furniture assembly.</p>
-        
-        {/* Trust Badges */}
-        <div className="flex justify-center gap-4 text-xs font-medium text-white/80">
-          <div className="flex items-center gap-1"><Star className="w-4 h-4 text-orange-400 fill-orange-400" /> 5-Star Rated</div>
-          <div className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-blue-400" /> Insured</div>
-          <div className="flex items-center gap-1"><Zap className="w-4 h-4 text-yellow-400" /> Fast Booking</div>
-        </div>
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-40 bg-[#0B1020]/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center shadow-md">
+        <div className="font-extrabold text-xl tracking-tight text-white">Pro <span className="text-orange-500">Assembly</span></div>
+        <a href={`tel:${phoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 active:bg-orange-500/20">
+          <PhoneCall className="w-4 h-4" /> Call Now
+        </a>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-orange-500/10 to-[#0B1020] pt-10 pb-8 px-4 text-center">
+        <div className="inline-flex items-center gap-1.5 bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-bold mb-4 border border-green-500/20">
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> Available Today
+        </div>
+        
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
+          Professional Furniture Assembly in Rowlett & DFW
+        </h1>
+        <p className="text-orange-400 font-bold text-lg mb-4">Fast. Insured. Stress-Free.</p>
+        
+        <p className="text-white/70 text-sm md:text-base max-w-md mx-auto mb-6 leading-relaxed">
+          Skip the headaches and confusing manuals. Our expert technicians provide flat-pack assembly with same-day availability and a free, instant quote.
+        </p>
+
+        <button 
+          onClick={scrollToForm}
+          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(249,115,22,0.4)] w-full max-w-xs transition-all active:scale-95"
+        >
+          Get Free Quote
+        </button>
+      </div>
+
+      {/* Trust & Benefits Section */}
+      <div className="px-4 py-6 space-y-6 border-b border-white/10 bg-white/5">
+        
+        {/* Social Proof */}
+        <div className="bg-[#0B1020] border border-white/10 p-4 rounded-xl text-center shadow-lg">
+          <div className="flex justify-center gap-1 mb-2">
+            {.map(i => <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />)}
+          </div>
+          <p className="italic text-white/80 text-sm mb-2">"Saved my entire weekend! They arrived on time, built my entire bedroom set in 2 hours, and took all the trash."</p>
+          <div className="text-xs text-white/50 font-bold uppercase tracking-wider">— Verified Customer</div>
+        </div>
+
+        {/* Benefits Bullet Points */}
+        <div className="grid grid-cols-1 gap-3">
+          <div className="flex items-center gap-3">
+            <Package className="w-6 h-6 text-orange-400 shrink-0" />
+            <span className="text-sm font-medium">Flat-pack & IKEA Experts</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <ThumbsUp className="w-6 h-6 text-orange-400 shrink-0" />
+            <span className="text-sm font-medium">100% Satisfaction Guarantee</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="w-6 h-6 text-orange-400 shrink-0" />
+            <span className="text-sm font-medium">Fully Insured & Affordable Rates</span>
+          </div>
+        </div>
+
+        {/* How It Works */}
+        <div className="bg-gradient-to-br from-orange-500/10 to-transparent p-5 rounded-xl border border-orange-500/20">
+          <h3 className="font-bold text-orange-400 mb-4 flex items-center gap-2"><Clock className="w-5 h-5"/> How It Works</h3>
+          <ol className="space-y-3 relative border-l border-white/10 ml-2.5">
+            <li className="pl-6 relative">
+              <span className="absolute -left-2.5 top-0 bg-[#0B1020] border border-orange-500 text-orange-500 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+              <div className="font-bold text-sm">Select Your Items</div>
+              <div className="text-xs text-white/60">Choose your furniture below for an instant quote.</div>
+            </li>
+            <li className="pl-6 relative">
+              <span className="absolute -left-2.5 top-0 bg-[#0B1020] border border-orange-500 text-orange-500 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+              <div className="font-bold text-sm">We Confirm Details</div>
+              <div className="text-xs text-white/60">We review your job and confirm the schedule.</div>
+            </li>
+            <li className="pl-6 relative">
+              <span className="absolute -left-2.5 top-0 bg-orange-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+              <div className="font-bold text-sm">Assembly Done</div>
+              <div className="text-xs text-white/60">Sit back and relax while we build.</div>
+            </li>
+          </ol>
+        </div>
+
+      </div>
+
+      <form id="booking-section" onSubmit={handleSubmit} className="pt-4">
         {/* Services Selection */}
         <div className="p-4 pt-6">
-          <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-orange-500" />
-            Select Your Items
-          </h2>
+          <h2 className="text-xl font-bold mb-1">Build Your Quote</h2>
+          <p className="text-sm text-white/60 mb-4">Select the items you need assembled below.</p>
+          
           <div className="grid grid-cols-2 gap-3">
             {services.map((s) => {
               const selected = selectedServices.find(x => x.label === s.label);
-
               return (
                 <div
                   key={s.label}
@@ -199,7 +258,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
           </div>
         </div>
 
-        {/* Quantities (Only shows if items are selected) */}
+        {/* Quantities */}
         {selectedServices.length > 0 && (
           <div className="px-4 space-y-2 animate-in fade-in slide-in-from-top-2">
             {selectedServices.map((s) => (
@@ -235,7 +294,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
           </div>
           
           <div className="pt-3 mt-3 border-t border-white/10 flex justify-between items-center">
-            <span className="font-bold text-lg">Total</span>
+            <span className="font-bold text-lg">Total Quote</span>
             <span className="text-orange-400 font-extrabold text-2xl">${finalTotal}</span>
           </div>
         </div>
@@ -244,7 +303,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
         <div className="p-4 space-y-4">
           <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-orange-500" />
-            Job Details
+            Final Details
           </h2>
 
           <div className="grid grid-cols-2 gap-3">
@@ -255,7 +314,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
           </div>
 
           <textarea
-            placeholder="Describe your job (brand, special requests, access instructions...)"
+            placeholder="Describe your job (brand, access instructions, elevators?)"
             value={form.details}
             rows={3}
             onChange={(e) => setForm({ ...form, details: e.target.value })}
@@ -302,7 +361,7 @@ Contact Preference: ${form.contactMethod.toUpperCase()}
             type="submit"
             className="w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all p-4 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(249,115,22,0.4)] flex justify-between items-center px-6"
           >
-            <span>Confirm Booking</span>
+            <span>Book Now</span>
             <span>${finalTotal}</span>
           </button>
         </div>
