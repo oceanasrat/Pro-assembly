@@ -99,7 +99,7 @@ export default function Preview() {
       return;
     }
 
-    setDebugLog("⏳ Triggering Google Ads Conversion...");
+    setDebugLog("⏳ Triggering Ad Conversions...");
 
     let redirected = false;
 
@@ -118,7 +118,6 @@ Date: ${form.date}
 Details: ${form.details || "None"}
 ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
 
-      // Added email option here to support PC users
       if (form.contactMethod === "whatsapp") {
         window.open(`https://wa.me/${myPhoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
       } else if (form.contactMethod === "email") {
@@ -136,20 +135,30 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
       triggerAction();
     };
 
-    // 🚀 PRO-LEVEL TRACKING WITH FAILSAFE AND TRANSACTION ID
+    // 🚀 PRO-LEVEL TRACKING (GOOGLE ADS + META PIXEL)
+    
+    // 1. Meta Pixel Lead Event
+    if (window.fbq) {
+      window.fbq('track', 'Lead', { 
+        value: finalTotal, 
+        currency: 'USD' 
+      });
+    }
+
+    // 2. Google Ads Conversion with Failsafe
     if (window.gtag) {
       window.gtag('event', 'conversion', {
         'send_to': 'AW-18126644001/0yX5CL23q6QcEKHGusND',
         'value': finalTotal,
         'currency': 'USD',
-        'transaction_id': Date.now().toString(), // Prevents duplicate counts in Ads
+        'transaction_id': Date.now().toString(),
         'event_callback': () => {
           setDebugLog("✅ SUCCESS: Conversion Fired Live!");
           safeRedirect();
         }
       });
 
-      // FALLBACK: If Google script is slow or blocked, redirect anyway after 1.2s
+      // Fallback redirect after 1.2s if gtag is slow
       setTimeout(() => {
         if (!redirected) {
           setDebugLog("⚠️ Fallback triggered (Callback slow)");
