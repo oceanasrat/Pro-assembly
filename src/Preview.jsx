@@ -3,7 +3,7 @@ import {
   Calendar, Locate, ShieldCheck, Star, CheckCircle2,
   PhoneCall, ThumbsUp, Package
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Preview() {
   const [form, setForm] = useState({
@@ -18,8 +18,15 @@ export default function Preview() {
   });
 
   const [selectedServices, setSelectedServices] = useState([]);
-  const [submitted, setSubmitted] = useState(false); // ✅ Added for Success Screen
-  const [debugLog, setDebugLog] = useState(""); // ✅ Added for live conversion testing
+  const [submitted, setSubmitted] = useState(false); 
+  const [debugLog, setDebugLog] = useState(""); 
+
+  // ✅ FIX 3: PageView Reinforcement
+  useEffect(() => {
+    if (window.fbq) {
+      window.fbq('track', 'ViewContent');
+    }
+  }, []);
 
   const services = [
     { icon: Drill, label: "Desk / Table", price: 110 },
@@ -58,7 +65,6 @@ export default function Preview() {
 
   const discountedTotal = Math.round(total * (1 - discount));
 
-  // ✅ FIX: ZIP string-to-number bug fixed while keeping your exact travel fee logic
   const getTravelFee = (zip) => {
     if (!zip) return 0;
     const z = parseInt(zip); 
@@ -99,11 +105,11 @@ export default function Preview() {
       return;
     }
 
-    setDebugLog("⏳ Triggering Ad Conversions...");
+    setDebugLog("⏳ Triggering Google Ads Conversion...");
 
     let redirected = false;
 
-    // ✅ The actual action to open apps or email
+    // ✅ FIX 1 & 2: Move Meta Events to REAL ACTION
     const triggerAction = () => {
       const servicesList = selectedServices.map(s => `${s.label} x${s.qty}`).join(", ");
       const isCallRequest = form.contactMethod === "call";
@@ -118,47 +124,46 @@ Date: ${form.date}
 Details: ${form.details || "None"}
 ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
 
+      // 🔥 TRACK LEAD (Fires only when user actually proceeds)
+      if (window.fbq) {
+        window.fbq('track', 'Lead', {
+          value: finalTotal,
+          currency: 'USD'
+        });
+      }
+
       if (form.contactMethod === "whatsapp") {
+        // 🔥 TRACK CONTACT (Specific to WhatsApp)
+        if (window.fbq) window.fbq('track', 'Contact');
         window.open(`https://wa.me/${myPhoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
       } else if (form.contactMethod === "email") {
         window.location.href = `mailto:contact@proassembl.com?subject=New Booking from ${form.name}&body=${encodeURIComponent(message)}`;
       } else {
+        // 🔥 TRACK CONTACT (Specific to SMS)
+        if (window.fbq) window.fbq('track', 'Contact');
         window.location.href = `sms:${myPhoneNumber}?body=${encodeURIComponent(message)}`;
       }
-      setSubmitted(true); // Show Success Screen
+      setSubmitted(true); 
     };
 
-    // ✅ Failsafe redirect function
     const safeRedirect = () => {
       if (redirected) return;
       redirected = true;
       triggerAction();
     };
 
-    // 🚀 PRO-LEVEL TRACKING (GOOGLE ADS + META PIXEL)
-    
-    // 1. Meta Pixel Lead Event
-    if (window.fbq) {
-      window.fbq('track', 'Lead', { 
-        value: finalTotal, 
-        currency: 'USD' 
-      });
-    }
-
-    // 2. Google Ads Conversion with Failsafe
     if (window.gtag) {
       window.gtag('event', 'conversion', {
         'send_to': 'AW-18126644001/0yX5CL23q6QcEKHGusND',
         'value': finalTotal,
         'currency': 'USD',
-        'transaction_id': Date.now().toString(),
+        'transaction_id': Date.now().toString(), 
         'event_callback': () => {
           setDebugLog("✅ SUCCESS: Conversion Fired Live!");
           safeRedirect();
         }
       });
 
-      // Fallback redirect after 1.2s if gtag is slow
       setTimeout(() => {
         if (!redirected) {
           setDebugLog("⚠️ Fallback triggered (Callback slow)");
@@ -171,7 +176,6 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
     }
   };
 
-  // ✅ SUCCESS SCREEN UI
   if (submitted) {
     return (
       <div className="bg-[#0B1020] text-white min-h-screen flex items-center justify-center p-6 text-center">
