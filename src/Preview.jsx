@@ -43,7 +43,7 @@ export default function Preview() {
 
   // 📸 NEW: Work Gallery Images (Replace these URLs with your actual image links)
   const galleryImages = [
-    ""/images/IMG_4648.jpeg"",
+    ""/images/IMG_4648.jpeg",
     "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=400&q=80",
     "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=400&q=80",
     "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=400&q=80"
