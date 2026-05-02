@@ -1,7 +1,7 @@
 import {
   Drill, Hammer, Wrench, Tv, Armchair, Dumbbell,
   Calendar, Locate, ShieldCheck, Star, CheckCircle2,
-  PhoneCall, ThumbsUp, Package
+  PhoneCall, ThumbsUp, Package, Camera
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -39,6 +39,14 @@ export default function Preview() {
     { icon: Armchair, label: "Couch", price: 140 },
     { icon: Wrench, label: "Shelves", price: 110 },
     { icon: Hammer, label: "Cabinets", price: 150 },
+  ];
+
+  // 📸 NEW: Work Gallery Images (Replace these URLs with your actual image links)
+  const galleryImages = [
+    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=400&q=80"
   ];
 
   const toggleService = (service) => {
@@ -216,8 +224,37 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
         <button type="button" onClick={scrollToForm} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full shadow-lg active:scale-95 transition-all">Get Free Quote</button>
       </div>
 
+      {/* 📸 NEW: Work Gallery Section */}
+      <div className="px-4 py-6">
+        <div className="flex flex-col items-center mb-5">
+          <div className="flex items-center gap-2 mb-1">
+            <Camera className="w-6 h-6 text-orange-400" />
+            <h2 className="text-2xl font-extrabold">Our Recent Work</h2>
+          </div>
+          <p className="text-white/60 text-sm">See why your neighbors trust us.</p>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          {galleryImages.map((src, index) => (
+            <div key={index} className="overflow-hidden rounded-2xl border border-white/10 relative group aspect-square bg-white/5">
+              <img 
+                src={src} 
+                alt={`Pro Assembly Work Sample ${index + 1}`} 
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                <span className="text-orange-400 text-xs font-black uppercase tracking-wider flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> Done Right
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Trust Section */}
-      <div className="px-4 py-6 space-y-6 bg-white/5">
+      <div className="px-4 py-6 space-y-6 bg-white/5 mt-4">
         <div className="bg-[#0B1020] border border-white/10 p-5 rounded-xl text-center">
           <div className="flex justify-center gap-1 mb-2 text-yellow-400">
             <Star className="w-5 h-5 fill-yellow-400" />
