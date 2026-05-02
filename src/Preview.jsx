@@ -43,11 +43,11 @@ export default function Preview() {
 
   // 📸 NEW: Work Gallery Images (Replace these URLs with your actual image links)
   const galleryImages = [
-  "/images/IMG_4648.jpeg",
-  "/images/IMG_4659.jpeg",
-  "/images/IMG_4660.jpeg",
-  "/images/copy_849F51B3-7230-4FA3-A6B0-D4E816F0ED68.jpeg"
-];
+    "/images/IMG_4648.jpeg",
+    "/images/IMG_4659.jpeg",
+    "/images/IMG_4660.jpeg",
+    "/images/copy_849F51B3-7230-4FA3-A6B0-D4E816F0ED68.jpeg"
+  ];
 
   const toggleService = (service) => {
     const exists = selectedServices.find(s => s.label === service.label);
@@ -234,18 +234,19 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
           <p className="text-white/60 text-sm">See why your neighbors trust us.</p>
         </div>
         
-        <div className="grid grid-cols-2 gap-3">
+        {/* Gallery Grid Fixed: Changed to flex-col and removed aspect-square/object-cover */}
+        <div className="flex flex-col gap-4">
           {galleryImages.map((src, index) => (
-            <div key={index} className="overflow-hidden rounded-2xl border border-white/10 relative group aspect-square bg-white/5">
+            <div key={index} className="overflow-hidden rounded-2xl border border-white/10 relative group bg-white/5">
               <img 
                 src={src} 
                 alt={`Pro Assembly Work Sample ${index + 1}`} 
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 pointer-events-none">
                 <span className="text-orange-400 text-xs font-black uppercase tracking-wider flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Done Right
+                  <CheckCircle2 className="w-4 h-4" /> Done Right
                 </span>
               </div>
             </div>
