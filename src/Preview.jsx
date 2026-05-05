@@ -13,13 +13,13 @@ export default function Preview() {
     address: "",
     city: "",
     zip: "",
-    date: "",
-    contactMethod: ""
+    date: ""
   });
 
   const [selectedServices, setSelectedServices] = useState([]);
   const [submitted, setSubmitted] = useState(false); 
   const [debugLog, setDebugLog] = useState(""); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ FIX 3: PageView Reinforcement
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function Preview() {
     { icon: Hammer, label: "Cabinets", price: 150 },
   ];
 
-  // 📸 NEW: Work Gallery Images (Replace these URLs with your actual image links)
+  // 📸 Work Gallery Images
   const galleryImages = [
     "/images/IMG_4648.jpeg",
     "/images/IMG_4659.jpeg",
@@ -108,31 +108,27 @@ export default function Preview() {
       alert("Please select at least one item.");
       return;
     }
-    if (!form.contactMethod) {
-      alert("Please choose a contact method.");
-      return;
-    }
 
-    setDebugLog("⏳ Triggering Google Ads Conversion...");
+    setIsSubmitting(true);
+    setDebugLog("⏳ Triggering Google Ads Conversion & Formspree...");
 
     let redirected = false;
 
-    // ✅ FIX 1 & 2: Move Meta Events to REAL ACTION
-    const triggerAction = () => {
+    // ✅ Formspree API Integration + Meta Pixel
+    const triggerAction = async () => {
       const servicesList = selectedServices.map(s => `${s.label} x${s.qty}`).join(", ");
-      const isCallRequest = form.contactMethod === "call";
+      
+      const payload = {
+        "Customer Name": form.name,
+        "Phone Number": form.phone,
+        "Service Date": form.date,
+        "Total Price": `$${finalTotal}`,
+        "Items to Assemble": servicesList,
+        "Full Address": `${form.address}, ${form.city} ${form.zip}`,
+        "Additional Details": form.details || "None provided"
+      };
 
-      const message = `${isCallRequest ? "📞 CALL REQUESTED:" : "📅 NEW BOOKING:"}
-Name: ${form.name}
-Phone: ${form.phone}
-Items: ${servicesList}
-Total: $${finalTotal}
-Address: ${form.address}, ${form.city} ${form.zip}
-Date: ${form.date}
-Details: ${form.details || "None"}
-${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
-
-      // 🔥 TRACK LEAD (Fires only when user actually proceeds)
+      // 🔥 TRACK LEAD
       if (window.fbq) {
         window.fbq('track', 'Lead', {
           value: finalTotal,
@@ -140,18 +136,26 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
         });
       }
 
-      if (form.contactMethod === "whatsapp") {
-        // 🔥 TRACK CONTACT (Specific to WhatsApp)
-        if (window.fbq) window.fbq('track', 'Contact');
-        window.open(`https://wa.me/${myPhoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
-      } else if (form.contactMethod === "email") {
-        window.location.href = `mailto:contact@proassembl.com?subject=New Booking from ${form.name}&body=${encodeURIComponent(message)}`;
-      } else {
-        // 🔥 TRACK CONTACT (Specific to SMS)
-        if (window.fbq) window.fbq('track', 'Contact');
-        window.location.href = `sms:${myPhoneNumber}?body=${encodeURIComponent(message)}`;
+      try {
+        const response = await fetch("https://formspree.io/f/xkoyrkgl", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          setSubmitted(true);
+        } else {
+          alert("There was an issue sending your request. Please try again or call us.");
+        }
+      } catch (error) {
+        alert("There was an issue sending your request. Please try again or call us.");
+      } finally {
+        setIsSubmitting(false);
       }
-      setSubmitted(true); 
     };
 
     const safeRedirect = () => {
@@ -179,7 +183,7 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
         }
       }, 1200);
     } else {
-      setDebugLog("⚠️ gtag not found - redirecting anyway");
+      setDebugLog("⚠️ gtag not found - submitting directly");
       safeRedirect();
     }
   };
@@ -191,10 +195,10 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500">
             <CheckCircle2 className="w-10 h-10 text-green-400" />
           </div>
-          <h1 className="text-3xl font-black">Booking Initialized!</h1>
-          <p className="text-white/60">Your {form.contactMethod} app should be opening now to confirm your appointment.</p>
+          <h1 className="text-3xl font-black">Booking Received!</h1>
+          <p className="text-white/60">Thank you, {form.name}! We have received your assembly request and will contact you shortly to confirm your appointment time.</p>
           <div className="p-3 bg-white/5 rounded text-xs font-mono text-green-400 border border-green-900">{debugLog}</div>
-          <button onClick={() => setSubmitted(false)} className="text-orange-400 font-bold">← Back to Site</button>
+          <button onClick={() => setSubmitted(false)} className="text-orange-400 font-bold">← Book Another Service</button>
         </div>
       </div>
     );
@@ -224,7 +228,7 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
         <button type="button" onClick={scrollToForm} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full shadow-lg active:scale-95 transition-all">Get Free Quote</button>
       </div>
 
-      {/* 📸 NEW: Work Gallery Section */}
+      {/* 📸 Work Gallery Section */}
       <div className="px-4 py-6">
         <div className="flex flex-col items-center mb-5">
           <div className="flex items-center gap-2 mb-1">
@@ -234,7 +238,6 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
           <p className="text-white/60 text-sm">See why your neighbors trust us.</p>
         </div>
         
-        {/* Gallery Grid Fixed: Changed to flex-col and removed aspect-square/object-cover */}
         <div className="flex flex-col gap-4">
           {galleryImages.map((src, index) => (
             <div key={index} className="overflow-hidden rounded-2xl border border-white/10 relative group bg-white/5">
@@ -336,20 +339,17 @@ ${isCallRequest ? "\nPLEASE CALL ME TO CONFIRM!" : ""}`;
             <input placeholder="ZIP" required type="number" className="p-4 bg-white/5 border border-white/10 rounded-xl outline-none" onChange={(e) => setForm({ ...form, zip: e.target.value })} />
           </div>
           <input type="date" required className="bg-white/5 border border-white/10 w-full p-4 rounded-xl outline-none font-bold" onChange={(e) => setForm({ ...form, date: e.target.value })} />
-          
-          <select required value={form.contactMethod} onChange={(e) => setForm({ ...form, contactMethod: e.target.value })} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl font-bold appearance-none outline-none text-orange-400">
-            <option value="" disabled className="text-white">Preferred Contact Method</option>
-            <option value="call" className="text-white">Call Me (I'll send you my info first)</option>
-            <option value="whatsapp" className="text-white">WhatsApp</option>
-            <option value="sms" className="text-white">Text Message (SMS)</option>
-            <option value="email" className="text-white">Email (Best for Desktop PCs)</option>
-          </select>
         </div>
 
         {/* Submit Button */}
         <div className="fixed bottom-0 left-0 w-full bg-[#0B1020]/95 backdrop-blur-lg border-t border-white/10 p-4 z-50">
-          <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all p-5 rounded-2xl font-black text-xl flex justify-between items-center px-8 shadow-xl shadow-orange-500/20">
-            <span>BOOK NOW</span><span className="bg-white/20 px-3 py-1 rounded-lg text-sm">${finalTotal}</span>
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className={`w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all p-5 rounded-2xl font-black text-xl flex justify-between items-center px-8 shadow-xl shadow-orange-500/20 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            <span>{isSubmitting ? "SENDING..." : "BOOK NOW"}</span>
+            <span className="bg-white/20 px-3 py-1 rounded-lg text-sm">${finalTotal}</span>
           </button>
         </div>
       </form>
