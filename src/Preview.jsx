@@ -18,7 +18,7 @@ export default function Preview() {
 
   const [selectedServices, setSelectedServices] = useState([]);
   const [submitted, setSubmitted] = useState(false); 
-  const [debugLog, setDebugLog] = useState(""); 
+  const [loadingMessage, setLoadingMessage] = useState(""); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Image Upload State
@@ -43,6 +43,8 @@ export default function Preview() {
     { icon: Armchair, label: "Couch", price: 140 },
     { icon: Wrench, label: "Shelves", price: 110 },
     { icon: Hammer, label: "Cabinets", price: 150 },
+    // Added option for unlisted items
+    { icon: Package, label: "Other / Custom", price: 0 }, 
   ];
 
   // 📸 Work Gallery Images
@@ -127,7 +129,7 @@ export default function Preview() {
     }
 
     setIsSubmitting(true);
-    setDebugLog("⏳ Triggering Google Ads Conversion & Formspree...");
+    setLoadingMessage("Processing your request...");
 
     let redirected = false;
 
@@ -136,7 +138,7 @@ export default function Preview() {
       let imageUrl = "No image uploaded";
 
       if (imageFile) {
-        setDebugLog("📸 Uploading image to Cloudinary...");
+        setLoadingMessage("Attaching your photo...");
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("upload_preset", "pro assembl"); 
@@ -154,6 +156,7 @@ export default function Preview() {
         }
       }
 
+      setLoadingMessage("Finalizing booking...");
       const servicesList = selectedServices.map(s => `${s.label} x${s.qty}`).join(", ");
       
       const payload = {
@@ -210,19 +213,17 @@ export default function Preview() {
         'currency': 'USD',
         'transaction_id': Date.now().toString(), 
         'event_callback': () => {
-          setDebugLog("✅ SUCCESS: Conversion Fired Live!");
+          // Removed the visible "Conversion Fired" message to keep it professional
           safeRedirect();
         }
       });
 
       setTimeout(() => {
         if (!redirected) {
-          setDebugLog("⚠️ Fallback triggered (Callback slow)");
           safeRedirect();
         }
       }, 1200);
     } else {
-      setDebugLog("⚠️ gtag not found - submitting directly");
       safeRedirect();
     }
   };
@@ -237,8 +238,8 @@ export default function Preview() {
             </div>
             <h1 className="text-3xl font-black">Booking Received!</h1>
             <p className="text-white/60">Thank you, {form.name}! We have received your assembly request and will contact you shortly to confirm your appointment time.</p>
-            <div className="p-3 bg-white/5 rounded text-xs font-mono text-green-400 border border-green-900 break-words">{debugLog}</div>
-            <button onClick={() => { setSubmitted(false); removeImage(); }} className="text-orange-400 font-bold hover:text-orange-300 transition-colors">← Book Another Service</button>
+            {/* Removed the debug log box entirely from the success screen */}
+            <button onClick={() => { setSubmitted(false); removeImage(); setForm({...form, details: ""}); setSelectedServices([]); }} className="text-orange-400 font-bold hover:text-orange-300 transition-colors">← Book Another Service</button>
           </div>
         </div>
       </div>
@@ -247,14 +248,13 @@ export default function Preview() {
 
   return (
     <div className="bg-[#050810] min-h-screen font-sans">
-      {/* 🌟 Desktop Wrapper: Constrains width so it looks like a sleek app interface instead of stretched out */}
       <div className="w-full max-w-xl mx-auto bg-[#0B1020] min-h-screen relative shadow-2xl shadow-orange-900/10 md:border-x border-white/10 pb-32">
         
         {/* Header */}
         <div className="sticky top-0 z-40 bg-[#0B1020]/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
           <div className="font-extrabold text-xl tracking-tight text-white">Pro <span className="text-orange-500">Assembly</span></div>
           <div className="flex items-center gap-2">
-            {debugLog && <div className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded hidden md:block">{debugLog}</div>}
+            {isSubmitting && <div className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded animate-pulse hidden md:block">{loadingMessage}</div>}
             <a href={`tel:${myPhoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 hover:bg-orange-500/20 transition-colors">
               <PhoneCall className="w-4 h-4" /> Call Now
             </a>
@@ -334,7 +334,9 @@ export default function Preview() {
                   <div key={s.label} onClick={() => toggleService(s)} className={`p-4 rounded-2xl border transition-all cursor-pointer hover:-translate-y-1 ${selected ? "bg-orange-500 border-orange-400 shadow-lg shadow-orange-500/20" : "bg-white/5 border-white/10 hover:bg-white/10"}`}>
                     <s.icon className={`mx-auto mb-3 w-6 h-6 md:w-8 md:h-8 ${selected ? "text-white" : "text-white/40"}`} />
                     <div className="text-xs md:text-sm font-bold uppercase mb-1 text-center">{s.label}</div>
-                    <div className={`font-black text-lg text-center ${selected ? "text-white" : "text-orange-400"}`}>${s.price}</div>
+                    <div className={`font-black text-lg text-center ${selected ? "text-white" : "text-orange-400"}`}>
+                      {s.price > 0 ? `$${s.price}` : "Quote"}
+                    </div>
                   </div>
                 );
               })}
@@ -365,8 +367,13 @@ export default function Preview() {
             <div className="flex justify-between text-sm font-bold opacity-70"><span>Travel Fee</span><span>${travelFee}</span></div>
             <div className="pt-4 border-t border-white/10 flex justify-between items-end relative z-10">
               <span className="font-bold text-sm uppercase opacity-80">Estimated Total</span>
-              <span className="text-orange-400 font-black text-4xl">${finalTotal}</span>
+              <span className="text-orange-400 font-black text-4xl">${finalTotal}{selectedServices.some(s => s.price === 0) ? '+' : ''}</span>
             </div>
+            {selectedServices.some(s => s.price === 0) && (
+              <div className="text-xs text-orange-400/80 italic text-right mt-1">
+                *Final price will be adjusted for custom items.
+              </div>
+            )}
           </div>
 
           {/* Form Inputs */}
@@ -379,7 +386,16 @@ export default function Preview() {
               <input placeholder="Name" required className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, name: e.target.value })} />
               <input placeholder="Phone" required type="tel" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, phone: e.target.value })} />
             </div>
-            <textarea placeholder="Any specific details? (e.g. Needs to be carried upstairs)" value={form.details} rows={3} onChange={(e) => setForm({ ...form, details: e.target.value })} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none resize-none focus:border-orange-500 transition-colors" />
+            
+            {/* Updated placeholder to guide custom item users */}
+            <textarea 
+              placeholder="Any specific details? If you selected 'Other / Custom', please describe the item or brand here." 
+              value={form.details} 
+              rows={3} 
+              onChange={(e) => setForm({ ...form, details: e.target.value })} 
+              className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none resize-none focus:border-orange-500 transition-colors" 
+            />
+            
             <div className="relative">
               <input placeholder="Street Address" required value={form.address} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none pr-12 focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, address: e.target.value })} />
               <button type="button" onClick={handleLocation} className="absolute right-3 top-3 text-orange-400 p-2 bg-orange-400/10 hover:bg-orange-400/20 transition-colors rounded-lg"><Locate className="w-5 h-5" /></button>
@@ -392,7 +408,7 @@ export default function Preview() {
             
             {/* 📸 Added Photo Upload UI */}
             <div className="pt-2">
-              <h3 className="text-sm font-bold mb-3 opacity-80 flex items-center gap-2"><Camera className="w-4 h-4"/> Upload a Photo (Optional)</h3>
+              <h3 className="text-sm font-bold mb-3 opacity-80 flex items-center gap-2"><Camera className="w-4 h-4"/> Upload a Photo (Optional but helpful for custom items!)</h3>
               {!imagePreview ? (
                 <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-white/20 rounded-xl bg-white/5 cursor-pointer hover:bg-white/10 hover:border-orange-500/50 transition-all group">
                   <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -412,7 +428,7 @@ export default function Preview() {
           </div>
         </form>
 
-        {/* Submit Button - Constrained to max-w-xl on desktop */}
+        {/* Submit Button */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-[#0B1020]/95 backdrop-blur-lg border-t border-white/10 p-4 z-50 md:rounded-t-2xl">
           <button 
             type="submit" 
@@ -420,8 +436,10 @@ export default function Preview() {
             disabled={isSubmitting}
             className={`w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all p-4 md:p-5 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex justify-between items-center px-6 md:px-8 shadow-xl shadow-orange-500/20 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
-            <span>{isSubmitting ? "SENDING..." : "CONFIRM BOOKING"}</span>
-            <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm md:text-base tracking-wide">${finalTotal}</span>
+            <span>{isSubmitting ? loadingMessage.toUpperCase() : "CONFIRM BOOKING"}</span>
+            <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm md:text-base tracking-wide">
+              ${finalTotal}{selectedServices.some(s => s.price === 0) ? '+' : ''}
+            </span>
           </button>
         </div>
 
