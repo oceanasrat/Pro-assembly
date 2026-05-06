@@ -252,7 +252,7 @@ export default function Preview() {
         
         {/* Header */}
         <div className="sticky top-0 z-40 bg-[#0B1020]/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
-          <div className="font-extrabold text-xl tracking-tight text-white">Pro <span className="text-orange-500">Assembly</span></div>
+          <div className="font-extrabold text-xl tracking-tight text-white">Pro <span className="text-orange-500">Assembl</span></div>
           <div className="flex items-center gap-2">
             {isSubmitting && <div className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded animate-pulse hidden md:block">{loadingMessage}</div>}
             <a href={`tel:${myPhoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 hover:bg-orange-500/20 transition-colors">
