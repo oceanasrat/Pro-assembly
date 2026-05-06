@@ -229,186 +229,203 @@ export default function Preview() {
 
   if (submitted) {
     return (
-      <div className="bg-[#0B1020] text-white min-h-screen flex items-center justify-center p-6 text-center">
-        <div className="space-y-6">
-          <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500">
-            <CheckCircle2 className="w-10 h-10 text-green-400" />
+      <div className="bg-[#050810] min-h-screen font-sans flex items-center justify-center p-4">
+        <div className="w-full max-w-xl bg-[#0B1020] text-white rounded-3xl p-8 text-center shadow-2xl md:border border-white/10">
+          <div className="space-y-6">
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500">
+              <CheckCircle2 className="w-10 h-10 text-green-400" />
+            </div>
+            <h1 className="text-3xl font-black">Booking Received!</h1>
+            <p className="text-white/60">Thank you, {form.name}! We have received your assembly request and will contact you shortly to confirm your appointment time.</p>
+            <div className="p-3 bg-white/5 rounded text-xs font-mono text-green-400 border border-green-900 break-words">{debugLog}</div>
+            <button onClick={() => { setSubmitted(false); removeImage(); }} className="text-orange-400 font-bold hover:text-orange-300 transition-colors">← Book Another Service</button>
           </div>
-          <h1 className="text-3xl font-black">Booking Received!</h1>
-          <p className="text-white/60">Thank you, {form.name}! We have received your assembly request and will contact you shortly to confirm your appointment time.</p>
-          <div className="p-3 bg-white/5 rounded text-xs font-mono text-green-400 border border-green-900">{debugLog}</div>
-          <button onClick={() => { setSubmitted(false); removeImage(); }} className="text-orange-400 font-bold">← Book Another Service</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#0B1020] text-white min-h-screen pb-32 font-sans">
-      
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-[#0B1020]/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
-        <div className="font-extrabold text-xl tracking-tight">Pro <span className="text-orange-500">Assembly</span></div>
-        <div className="flex items-center gap-2">
-          {debugLog && <div className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded hidden md:block">{debugLog}</div>}
-          <a href={`tel:${myPhoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 active:bg-orange-500/30">
-            <PhoneCall className="w-4 h-4" /> Call Now
-          </a>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-orange-500/10 to-[#0B1020] pt-10 pb-8 px-4 text-center">
-        <div className="inline-flex items-center gap-1.5 bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-bold mb-4 border border-green-500/20">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> Available Today
-        </div>
-        <h1 className="text-3xl font-extrabold mb-3 leading-tight">Expert Furniture Assembly in Rowlett & DFW</h1>
-        <p className="text-orange-400 font-bold text-lg mb-4">Fast. Insured. Stress-Free.</p>
-        <button type="button" onClick={scrollToForm} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full shadow-lg active:scale-95 transition-all">Get Free Quote</button>
-      </div>
-
-      {/* 📸 Work Gallery Section */}
-      <div className="px-4 py-6">
-        <div className="flex flex-col items-center mb-5">
-          <div className="flex items-center gap-2 mb-1">
-            <Camera className="w-6 h-6 text-orange-400" />
-            <h2 className="text-2xl font-extrabold">Our Recent Work</h2>
-          </div>
-          <p className="text-white/60 text-sm">See why your neighbors trust us.</p>
-        </div>
+    <div className="bg-[#050810] min-h-screen font-sans">
+      {/* 🌟 Desktop Wrapper: Constrains width so it looks like a sleek app interface instead of stretched out */}
+      <div className="w-full max-w-xl mx-auto bg-[#0B1020] min-h-screen relative shadow-2xl shadow-orange-900/10 md:border-x border-white/10 pb-32">
         
-        <div className="flex flex-col gap-4">
-          {galleryImages.map((src, index) => (
-            <div key={index} className="overflow-hidden rounded-2xl border border-white/10 relative group bg-white/5">
-              <img 
-                src={src} 
-                alt={`Pro Assembly Work Sample ${index + 1}`} 
-                className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 pointer-events-none">
-                <span className="text-orange-400 text-xs font-black uppercase tracking-wider flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4" /> Done Right
-                </span>
-              </div>
+        {/* Header */}
+        <div className="sticky top-0 z-40 bg-[#0B1020]/95 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
+          <div className="font-extrabold text-xl tracking-tight text-white">Pro <span className="text-orange-500">Assembly</span></div>
+          <div className="flex items-center gap-2">
+            {debugLog && <div className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded hidden md:block">{debugLog}</div>}
+            <a href={`tel:${myPhoneNumber}`} className="flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-bold border border-orange-500/20 hover:bg-orange-500/20 transition-colors">
+              <PhoneCall className="w-4 h-4" /> Call Now
+            </a>
+          </div>
+        </div>
+
+        {/* Hero Section */}
+        <div className="bg-gradient-to-b from-orange-500/10 to-[#0B1020] pt-10 pb-8 px-6 text-center text-white">
+          <div className="inline-flex items-center gap-1.5 bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-bold mb-4 border border-green-500/20">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> Available Today
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight tracking-tight">Expert Furniture Assembly in Rowlett & DFW</h1>
+          <p className="text-orange-400 font-bold text-lg md:text-xl mb-6">Fast. Insured. Stress-Free.</p>
+          <button type="button" onClick={scrollToForm} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full shadow-lg shadow-orange-500/20 active:scale-95 transition-all w-full md:w-auto">Get Free Quote</button>
+        </div>
+
+        {/* 📸 Work Gallery Section */}
+        <div className="px-6 py-8 text-white">
+          <div className="flex flex-col items-center mb-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Camera className="w-6 h-6 text-orange-400" />
+              <h2 className="text-2xl font-extrabold">Our Recent Work</h2>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Trust Section */}
-      <div className="px-4 py-6 space-y-6 bg-white/5 mt-4">
-        <div className="bg-[#0B1020] border border-white/10 p-5 rounded-xl text-center">
-          <div className="flex justify-center gap-1 mb-2 text-yellow-400">
-            <Star className="w-5 h-5 fill-yellow-400" />
-            <Star className="w-5 h-5 fill-yellow-400" />
-            <Star className="w-5 h-5 fill-yellow-400" />
-            <Star className="w-5 h-5 fill-yellow-400" />
-            <Star className="w-5 h-5 fill-yellow-400" />
+            <p className="text-white/60 text-sm">See why your neighbors trust us.</p>
           </div>
-          <p className="italic text-white/80 text-sm">"They built my bedroom set in 2 hours and took all the trash. Saved my weekend!"</p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4">
-          <div className="flex items-center gap-3"><Package className="w-5 h-5 text-orange-400" /><span className="text-sm font-semibold">Flat-pack & IKEA Experts</span></div>
-          <div className="flex items-center gap-3"><ThumbsUp className="w-5 h-5 text-orange-400" /><span className="text-sm font-semibold">100% Satisfaction Guarantee</span></div>
-          <div className="flex items-center gap-3"><ShieldCheck className="w-5 h-5 text-orange-400" /><span className="text-sm font-semibold">Fully Insured & Professional</span></div>
-        </div>
-      </div>
-
-      <form id="booking-section" onSubmit={handleSubmit} className="pt-4">
-        {/* Service Selection */}
-        <div className="p-4 pt-6">
-          <h2 className="text-xl font-extrabold mb-6">Select Your Items</h2>
+          
           <div className="grid grid-cols-2 gap-3">
-            {services.map((s) => {
-              const selected = selectedServices.find(x => x.label === s.label);
-              return (
-                <div key={s.label} onClick={() => toggleService(s)} className={`p-4 rounded-2xl border transition-all active:scale-95 text-center ${selected ? "bg-orange-500 border-orange-400" : "bg-white/5 border-white/10"}`}>
-                  <s.icon className={`mx-auto mb-3 w-6 h-6 ${selected ? "text-white" : "text-white/40"}`} />
-                  <div className="text-xs font-bold uppercase mb-1">{s.label}</div>
-                  <div className={`font-black text-lg ${selected ? "text-white" : "text-orange-400"}`}>${s.price}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Quantities */}
-        {selectedServices.length > 0 && (
-          <div className="px-4 space-y-2">
-            {selectedServices.map((s) => (
-              <div key={s.label} className="flex justify-between items-center bg-white/5 border border-white/10 p-4 rounded-xl">
-                <div className="font-bold text-sm">{s.label}</div>
-                <div className="flex gap-5 items-center bg-black/40 px-3 py-1.5 rounded-lg">
-                  <button type="button" onClick={() => updateQty(s.label, s.qty - 1)} className="text-lg font-bold">-</button>
-                  <span className="font-black text-sm">{s.qty}</span>
-                  <button type="button" onClick={() => updateQty(s.label, s.qty + 1)} className="text-lg font-bold">+</button>
+            {galleryImages.map((src, index) => (
+              <div key={index} className="overflow-hidden rounded-xl border border-white/10 relative group bg-white/5 aspect-square">
+                <img 
+                  src={src} 
+                  alt={`Pro Assembly Work Sample ${index + 1}`} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 pointer-events-none">
+                  <span className="text-orange-400 text-[10px] md:text-xs font-black uppercase tracking-wider flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" /> Done Right
+                  </span>
                 </div>
               </div>
             ))}
           </div>
-        )}
+        </div>
 
-        {/* Price Summary */}
-        <div className="m-4 p-6 bg-white/5 border border-white/10 rounded-2xl space-y-3">
-          <div className="flex justify-between text-xs font-bold opacity-50"><span>Subtotal</span><span>${total}</span></div>
-          {discount > 0 && <div className="flex justify-between text-xs font-bold text-green-400"><span>Multi-Item Discount</span><span>-{discount * 100}%</span></div>}
-          <div className="flex justify-between text-xs font-bold opacity-50"><span>Travel Fee</span><span>${travelFee}</span></div>
-          <div className="pt-4 border-t border-white/10 flex justify-between items-end">
-            <span className="font-bold text-sm uppercase opacity-60">Estimated Total</span>
-            <span className="text-orange-400 font-black text-3xl">${finalTotal}</span>
+        {/* Trust Section */}
+        <div className="px-6 py-8 space-y-6 bg-white/5 text-white">
+          <div className="bg-[#0B1020] border border-white/10 p-5 rounded-2xl text-center shadow-inner">
+            <div className="flex justify-center gap-1 mb-3 text-yellow-400">
+              <Star className="w-5 h-5 fill-yellow-400" />
+              <Star className="w-5 h-5 fill-yellow-400" />
+              <Star className="w-5 h-5 fill-yellow-400" />
+              <Star className="w-5 h-5 fill-yellow-400" />
+              <Star className="w-5 h-5 fill-yellow-400" />
+            </div>
+            <p className="italic text-white/80 text-sm md:text-base">"They built my bedroom set in 2 hours and took all the trash. Saved my weekend!"</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-2">
+            <div className="flex items-center gap-3 md:flex-col md:text-center md:bg-[#0B1020] md:p-4 md:rounded-xl md:border md:border-white/5"><Package className="w-5 h-5 md:w-6 md:h-6 text-orange-400" /><span className="text-sm font-semibold">Flat-pack & IKEA Experts</span></div>
+            <div className="flex items-center gap-3 md:flex-col md:text-center md:bg-[#0B1020] md:p-4 md:rounded-xl md:border md:border-white/5"><ThumbsUp className="w-5 h-5 md:w-6 md:h-6 text-orange-400" /><span className="text-sm font-semibold">100% Satisfaction Guarantee</span></div>
+            <div className="flex items-center gap-3 md:flex-col md:text-center md:bg-[#0B1020] md:p-4 md:rounded-xl md:border md:border-white/5"><ShieldCheck className="w-5 h-5 md:w-6 md:h-6 text-orange-400" /><span className="text-sm font-semibold">Fully Insured & Professional</span></div>
           </div>
         </div>
 
-        {/* Form Inputs */}
-        <div className="p-4 space-y-4">
-          <h2 className="text-lg font-extrabold flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-orange-500" />Contact Details</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <input placeholder="Name" required className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none" onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <input placeholder="Phone" required type="tel" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none" onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+        <form id="booking-section" onSubmit={handleSubmit} className="pt-8 text-white">
+          {/* Service Selection */}
+          <div className="px-6">
+            <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-sm">1</span> 
+              Select Your Items
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+              {services.map((s) => {
+                const selected = selectedServices.find(x => x.label === s.label);
+                return (
+                  <div key={s.label} onClick={() => toggleService(s)} className={`p-4 rounded-2xl border transition-all cursor-pointer hover:-translate-y-1 ${selected ? "bg-orange-500 border-orange-400 shadow-lg shadow-orange-500/20" : "bg-white/5 border-white/10 hover:bg-white/10"}`}>
+                    <s.icon className={`mx-auto mb-3 w-6 h-6 md:w-8 md:h-8 ${selected ? "text-white" : "text-white/40"}`} />
+                    <div className="text-xs md:text-sm font-bold uppercase mb-1 text-center">{s.label}</div>
+                    <div className={`font-black text-lg text-center ${selected ? "text-white" : "text-orange-400"}`}>${s.price}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <textarea placeholder="Any specific details?" value={form.details} rows={3} onChange={(e) => setForm({ ...form, details: e.target.value })} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none resize-none" />
-          <div className="relative">
-            <input placeholder="Street Address" required value={form.address} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none pr-12" onChange={(e) => setForm({ ...form, address: e.target.value })} />
-            <button type="button" onClick={handleLocation} className="absolute right-3 top-3 text-orange-400 p-2 bg-orange-400/10 rounded-lg"><Locate className="w-5 h-5" /></button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <input placeholder="City" required className="p-4 bg-white/5 border border-white/10 rounded-xl outline-none" onChange={(e) => setForm({ ...form, city: e.target.value })} />
-            <input placeholder="ZIP" required type="number" className="p-4 bg-white/5 border border-white/10 rounded-xl outline-none" onChange={(e) => setForm({ ...form, zip: e.target.value })} />
-          </div>
-          <input type="date" required className="bg-white/5 border border-white/10 w-full p-4 rounded-xl outline-none font-bold" onChange={(e) => setForm({ ...form, date: e.target.value })} />
-          
-          {/* 📸 Added Photo Upload UI */}
-          <div className="mt-4">
-            <h3 className="text-sm font-bold mb-2 opacity-80">Upload a Photo (Optional)</h3>
-            {!imagePreview ? (
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl bg-white/5 cursor-pointer hover:bg-white/10 transition-all">
-                <UploadCloud className="w-8 h-8 text-orange-400 mb-2" />
-                <p className="text-xs font-semibold text-white/70">Tap to upload photo</p>
-                <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-              </label>
-            ) : (
-              <div className="relative rounded-xl overflow-hidden border border-white/20 w-full h-48">
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                <button type="button" onClick={removeImage} className="absolute top-2 right-2 bg-red-500/90 text-white p-2 rounded-lg text-xs font-bold shadow-lg backdrop-blur-sm">Remove</button>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Submit Button */}
-        <div className="fixed bottom-0 left-0 w-full bg-[#0B1020]/95 backdrop-blur-lg border-t border-white/10 p-4 z-50">
+          {/* Quantities */}
+          {selectedServices.length > 0 && (
+            <div className="px-6 mt-6 space-y-3">
+              {selectedServices.map((s) => (
+                <div key={s.label} className="flex justify-between items-center bg-white/5 border border-white/10 p-4 rounded-xl">
+                  <div className="font-bold text-sm md:text-base">{s.label}</div>
+                  <div className="flex gap-5 items-center bg-[#050810] px-3 py-1.5 rounded-lg border border-white/5">
+                    <button type="button" onClick={() => updateQty(s.label, s.qty - 1)} className="text-xl font-bold text-white/70 hover:text-white transition-colors">-</button>
+                    <span className="font-black text-sm md:text-base w-4 text-center">{s.qty}</span>
+                    <button type="button" onClick={() => updateQty(s.label, s.qty + 1)} className="text-xl font-bold text-white/70 hover:text-white transition-colors">+</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Price Summary */}
+          <div className="mx-6 mt-6 p-6 bg-gradient-to-br from-white/5 to-transparent border border-white/10 rounded-2xl space-y-3 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 blur-3xl rounded-full pointer-events-none"></div>
+            <div className="flex justify-between text-sm font-bold opacity-70"><span>Subtotal</span><span>${total}</span></div>
+            {discount > 0 && <div className="flex justify-between text-sm font-bold text-green-400"><span>Multi-Item Discount</span><span>-{discount * 100}%</span></div>}
+            <div className="flex justify-between text-sm font-bold opacity-70"><span>Travel Fee</span><span>${travelFee}</span></div>
+            <div className="pt-4 border-t border-white/10 flex justify-between items-end relative z-10">
+              <span className="font-bold text-sm uppercase opacity-80">Estimated Total</span>
+              <span className="text-orange-400 font-black text-4xl">${finalTotal}</span>
+            </div>
+          </div>
+
+          {/* Form Inputs */}
+          <div className="p-6 space-y-5">
+            <h2 className="text-2xl font-extrabold flex items-center gap-2 mb-2">
+              <span className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-sm">2</span>
+              Contact Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input placeholder="Name" required className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <input placeholder="Phone" required type="tel" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            </div>
+            <textarea placeholder="Any specific details? (e.g. Needs to be carried upstairs)" value={form.details} rows={3} onChange={(e) => setForm({ ...form, details: e.target.value })} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none resize-none focus:border-orange-500 transition-colors" />
+            <div className="relative">
+              <input placeholder="Street Address" required value={form.address} className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none pr-12 focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, address: e.target.value })} />
+              <button type="button" onClick={handleLocation} className="absolute right-3 top-3 text-orange-400 p-2 bg-orange-400/10 hover:bg-orange-400/20 transition-colors rounded-lg"><Locate className="w-5 h-5" /></button>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <input placeholder="City" required className="p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, city: e.target.value })} />
+              <input placeholder="ZIP" required type="number" className="p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-orange-500 transition-colors" onChange={(e) => setForm({ ...form, zip: e.target.value })} />
+            </div>
+            <input type="date" required className="bg-white/5 border border-white/10 w-full p-4 rounded-xl outline-none font-bold focus:border-orange-500 transition-colors cursor-pointer" onChange={(e) => setForm({ ...form, date: e.target.value })} />
+            
+            {/* 📸 Added Photo Upload UI */}
+            <div className="pt-2">
+              <h3 className="text-sm font-bold mb-3 opacity-80 flex items-center gap-2"><Camera className="w-4 h-4"/> Upload a Photo (Optional)</h3>
+              {!imagePreview ? (
+                <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-white/20 rounded-xl bg-white/5 cursor-pointer hover:bg-white/10 hover:border-orange-500/50 transition-all group">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <UploadCloud className="w-6 h-6 text-orange-400" />
+                  </div>
+                  <p className="text-sm font-semibold text-white/80">Tap to upload box or item photo</p>
+                  <p className="text-xs text-white/40 mt-1">JPEG, PNG, JPG</p>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+                </label>
+              ) : (
+                <div className="relative rounded-xl overflow-hidden border border-white/20 w-full h-56 bg-[#050810]">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
+                  <button type="button" onClick={removeImage} className="absolute top-3 right-3 bg-red-500/90 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg backdrop-blur-sm transition-colors">Remove Image</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </form>
+
+        {/* Submit Button - Constrained to max-w-xl on desktop */}
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-[#0B1020]/95 backdrop-blur-lg border-t border-white/10 p-4 z-50 md:rounded-t-2xl">
           <button 
             type="submit" 
+            form="booking-section"
             disabled={isSubmitting}
-            className={`w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.97] transition-all p-5 rounded-2xl font-black text-xl flex justify-between items-center px-8 shadow-xl shadow-orange-500/20 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all p-4 md:p-5 rounded-xl md:rounded-2xl font-black text-lg md:text-xl flex justify-between items-center px-6 md:px-8 shadow-xl shadow-orange-500/20 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
-            <span>{isSubmitting ? "SENDING..." : "BOOK NOW"}</span>
-            <span className="bg-white/20 px-3 py-1 rounded-lg text-sm">${finalTotal}</span>
+            <span>{isSubmitting ? "SENDING..." : "CONFIRM BOOKING"}</span>
+            <span className="bg-white/20 px-3 py-1.5 rounded-lg text-sm md:text-base tracking-wide">${finalTotal}</span>
           </button>
         </div>
-      </form>
+
+      </div>
     </div>
   );
 }
